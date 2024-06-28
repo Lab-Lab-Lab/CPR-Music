@@ -28,10 +28,8 @@ export default function ConnectActivity() {
   const assignment =
     loadedActivities &&
     activities &&
-    activities?.[slug] &&
-    activities?.[slug].filter(
+    activities?.[piece].filter(
       (assn) =>
-        assn.piece_slug === piece &&
         assn.activity_type_category.startsWith(actCategory)
     )?.[0];
   const assignmentId = assignment?.id;

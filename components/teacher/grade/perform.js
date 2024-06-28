@@ -39,6 +39,7 @@ export default function GradePerform({ submissions }) {
         {submissions &&
           submissions.map((submission, submissionIdx) => {
             let rte;
+            let reflection;
             if (
               submission?.assignment?.activity?.activity_type?.category ===
                 'Respond' &&
@@ -78,7 +79,7 @@ export default function GradePerform({ submissions }) {
                           <Row>
                             <Col>
                               <p>
-                                {JSON.parse(submission?.content).reflection}
+                                {reflection}
                               </p>
                             </Col>
                             <Col xs={1}>

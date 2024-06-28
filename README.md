@@ -1,3 +1,6 @@
+# CPR-Music
+This is the frontend for MusicCPR.org
+
 # Deploying
 1. tag the version `git tag <whatever, e.g. v0.2.2>`
 1. push the tag `git push origin <whatever, e.g. v0.2.2>`
