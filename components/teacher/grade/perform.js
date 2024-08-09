@@ -3,6 +3,7 @@ import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import { Card, Col, Row } from 'react-bootstrap';
 import dynamic from 'next/dynamic';
 import { useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import RTE from './rte';
 
 const FlatEditor = dynamic(() => import('../../flatEditor'), {
@@ -40,6 +41,20 @@ export default function GradePerform({ submissions }) {
           submissions.map((submission, submissionIdx) => {
             let rte;
             let reflection;
+            let parsedScore;
+
+            if (
+              submission?.assignment?.activity?.activity_type?.category ===
+                'Create' &&
+              submission?.content
+            ) {
+              try {
+                parsedScore = JSON.parse(submission.content);
+              } catch (e) {
+                console.error(e, submission.content);
+              }
+            }
+
             if (
               submission?.assignment?.activity?.activity_type?.category ===
                 'Respond' &&
@@ -121,9 +136,18 @@ export default function GradePerform({ submissions }) {
                         ?.category === 'Create' &&
                         submission?.content && (
                           <ListGroupItem>
-                            <FlatEditor
-                              scoreJSON={JSON.parse(submission.content)}
-                            />
+                            {parsedScore ? (
+                              <ErrorBoundary
+                                fallback={<div>Something went wrong</div>}
+                              >
+                                <FlatEditor scoreJSON={parsedScore} />
+                              </ErrorBoundary>
+                            ) : (
+                              <div>
+                                <p>no score/erroneous score</p>
+                                <pre>{submission.content}</pre>
+                              </div>
+                            )}
                           </ListGroupItem>
                         )}
                       <ListGroupItem>
