@@ -3,9 +3,11 @@ import { useRouter } from 'next/router';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Layout from '../../components/layout';
 
 // https://github.com/nextauthjs/next-auth/issues/2426#issuecomment-1141406105
@@ -15,6 +17,8 @@ export default function SignIn({ csrfToken }) {
   const session = useSession();
   const [csrf, setCsrf] = useState(csrfToken);
   const { error } = useRouter().query;
+  const [pass, changePassView] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     async function fetchCsrf() {
@@ -25,37 +29,112 @@ export default function SignIn({ csrfToken }) {
       fetchCsrf();
     }
   }, [session.status]);
+
+  function viewPass(event) {
+    event.preventDefault();
+    changePassView(!pass);
+  }
+
+  function handleMouseEnter() {
+    setIsHovered(true);
+  }
+
+  function handleMouseLeave() {
+    setIsHovered(false);
+  }
   return (
     <Layout>
-      <Form
-        method="post"
-        action="/api/auth/callback/credentials"
-        className="mt-3"
-      >
-        <input name="csrfToken" type="hidden" defaultValue={csrf} />
-        <Form.Group as={Row} className="mb-3" controlId="formUsername">
-          <Form.Label column sm={2}>
-            Username
-          </Form.Label>
-          <Col sm={10}>
-            <Form.Control type="text" name="username" placeholder="Username" />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3" controlId="formPassword">
-          <Form.Label column sm={2}>
-            Password
-          </Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Password"
-            />
-          </Col>
-        </Form.Group>
-        <Button type="submit">Sign in</Button>
-        {error && <SignInError error={error} />}
-      </Form>
+      <Container>
+        <Form
+          method="post"
+          action="/api/auth/callback/credentials"
+          className="mt-3"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <input name="csrfToken" type="hidden" defaultValue={csrf} />
+          <Form.Group
+            as={Row}
+            className="mb-3 d-flex justify-content-center"
+            controlId="formUsername"
+            style={{ width: '100%' }}
+          >
+            <Form.Label column sm={2}>
+              Username
+            </Form.Label>
+            <Col md={4} xs={10}>
+              <Form.Control
+                type="text"
+                name="username"
+                placeholder="Username"
+                style={{ borderRadius: '30px', borderWidth: '3px' }}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            className="mb-3 d-flex justify-content-center"
+            controlId="formPassword"
+            style={{ width: '100%' }}
+          >
+            <Form.Label column sm={2}>
+              Password
+            </Form.Label>
+            <Col md={4} xs={10}>
+              <Form.Control
+                type={pass ? 'text' : 'password'}
+                name="password"
+                placeholder="Password"
+                className="position-relative"
+                style={{
+                  borderRadius: '30px',
+                  borderWidth: '3px',
+                  paddingRight: '50px',
+                }}
+              />
+              <button
+                type="button"
+                onClick={viewPass}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="position-absolute"
+                style={{
+                  top: '50%',
+                  right: '30px',
+                  transform: 'translateY(-50%)',
+                  backgroundColor: 'transparent',
+                  opacity: isHovered ? '100%' : '50%',
+                  border: 'none',
+                  padding: '0',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  transition: 'opacity 0.2s linear',
+                }}
+              >
+                {pass ? (
+                  <FaEyeSlash style={{ width: '30px', height: '30px' }} />
+                ) : (
+                  <FaEye style={{ width: '30px', height: '30px' }} />
+                )}
+              </button>
+            </Col>
+          </Form.Group>
+          <Button
+            type="submit"
+            style={{ width: '100px', marginBottom: '3rem' }}
+          >
+            Sign in
+          </Button>
+          {error && <SignInError error={error} />}
+        </Form>
+      </Container>
     </Layout>
   );
 }
@@ -86,7 +165,7 @@ const errors = {
 function SignInError({ error = errors.default }) {
   const errorMessage = error && (errors[error] ?? errors.default);
   return (
-    <Alert variant="danger">
+    <Alert variant="danger" style={{ width: 'fit-content' }}>
       {errorMessage}{' '}
       {error === 'CredentialsSignin' && (
         <a
