@@ -29,7 +29,13 @@ jobs:
             echo "Pulling latest changes..."
             git pull origin dev
 
-            echo "Creating test dir"
-            mkdir test/
+            echo "Building Docker image..."
+            docker build -t fe-test:dev .
 
+            echo "Stopping and removing old container"
+            docker stop fe-test-dev || true
+            docker rm fe-test-dev || true
+
+            echo "Starting new container..."
+            docker run -d --name fe-test-dev -p 3006:3000 fe-test:dev 
           EOF
