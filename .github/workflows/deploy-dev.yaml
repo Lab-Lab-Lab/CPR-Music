@@ -38,20 +38,20 @@ jobs:
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             set -e
-            echo "Deploying to $DEPLOY_DIR..."
+            echo "Deploying to ${{ env.DEPLOY_DIR }}..."
 
-            cd $DEPLOY_DIR
+            cd ${{ env.DEPLOY_DIR }}
   
             echo "Pulling latest changes..."
             git pull origin ${{ github.ref_name }} 
 
             echo "Stopping and removing old container"
-            docker stop $CONTAINER_NAME || true
-            docker rm $CONTAINER_NAME || true
+            docker stop ${{ env.CONTAINER_NAME }}|| true
+            docker rm ${{ env.CONTAINER_NAME }}|| true
 
             echo "Building new image..."
-            docker build -t $IMAGE_NAME $DOCKERFILE
+            docker build -t ${{ env.IMAGE_NAME }} -f ${{ env.DOCKERFILE }} .
 
             echo "Starting new container..."
-            docker run -d --name $CONTAINER_NAME -p 3006:3000 $IMAGE_NAME 
+            docker run -d --name ${{ env.CONTAINER_NAME }} -p 3006:3000 ${{ env.IMAGE_NAME }}
           EOF
