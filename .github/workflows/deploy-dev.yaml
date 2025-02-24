@@ -13,6 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "DEPLOY_DIR=/data/MusicCPRFEProd" >> $GITHUB_ENV
+            echo "IMAGE_NAME=frontend:prod" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=frontend-prod" >> $GITHUB_ENV
+            echo "DOCKERFILE=Dockerfile.prod" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_DIR=/data/FEActionsTest" >> $GITHUB_ENV
+            echo "IMAGE_NAME=frontend:dev" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=frontend-dev" >> $GITHUB_ENV
+            echo "DOCKERFILE=Dockerfile.dev" >> $GITHUB_ENV
+          fi
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -24,18 +38,20 @@ jobs:
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             set -e
-            cd /data/FEActionsTest/
+            echo "Deploying to $DEPLOY_DIR..."
 
+            cd $DEPLOY_DIR
+  
             echo "Pulling latest changes..."
-            git pull origin dev
-
-            echo "Building Docker image..."
-            docker build -t fe-test:dev .
+            git pull origin ${{ github.ref_name }} 
 
             echo "Stopping and removing old container"
-            docker stop fe-test-dev || true
-            docker rm fe-test-dev || true
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+
+            echo "Building new image..."
+            docker build -t $IMAGE_NAME $DOCKERFILE
 
             echo "Starting new container..."
-            docker run -d --name fe-test-dev -p 3006:3000 fe-test:dev 
+            docker run -d --name $CONTAINER_NAME -p 3006:3000 $IMAGE_NAME 
           EOF
