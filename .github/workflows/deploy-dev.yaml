@@ -19,12 +19,12 @@ jobs:
             echo "DEPLOY_DIR=/data/MusicCPRFEProd" >> $GITHUB_ENV
             echo "IMAGE_NAME=frontend:prod" >> $GITHUB_ENV
             echo "CONTAINER_NAME=frontend-prod" >> $GITHUB_ENV
-            echo "DOCKERFILE=Dockerfile.prod" >> $GITHUB_ENV
+            echo "HOST_PORT=3000" >> $GITHUB_ENV
           else
             echo "DEPLOY_DIR=/data/FEActionsTest" >> $GITHUB_ENV
             echo "IMAGE_NAME=frontend:dev" >> $GITHUB_ENV
             echo "CONTAINER_NAME=frontend-dev" >> $GITHUB_ENV
-            echo "DOCKERFILE=Dockerfile.dev" >> $GITHUB_ENV
+            echo "HOST_PORT=3006" >> $GITHUB_ENV
           fi
 
       - name: Set up SSH
@@ -50,8 +50,8 @@ jobs:
             docker rm ${{ env.CONTAINER_NAME }}|| true
 
             echo "Building new image..."
-            docker build -t ${{ env.IMAGE_NAME }} -f ${{ env.DOCKERFILE }} .
+            docker build -t ${{ env.IMAGE_NAME }} .
 
             echo "Starting new container..."
-            docker run -d --name ${{ env.CONTAINER_NAME }} -p 3006:3000 ${{ env.IMAGE_NAME }}
+            docker run -d --name ${{ env.CONTAINER_NAME }} -p ${{ env.HOST_PORT }}:3000 ${{ env.IMAGE_NAME }}
           EOF
