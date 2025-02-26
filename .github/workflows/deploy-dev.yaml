@@ -19,12 +19,12 @@ jobs:
             echo "DEPLOY_DIR=/data/MusicCPRFEProd" >> $GITHUB_ENV
             echo "IMAGE_NAME=frontend:prod" >> $GITHUB_ENV
             echo "CONTAINER_NAME=frontend-prod" >> $GITHUB_ENV
-            echo "HOST_PORT=3000" >> $GITHUB_ENV
+            echo "HOST_PORT=3003" >> $GITHUB_ENV
           else
             echo "DEPLOY_DIR=/data/MusicCPRFEDev" >> $GITHUB_ENV
             echo "IMAGE_NAME=frontend:dev" >> $GITHUB_ENV
             echo "CONTAINER_NAME=frontend-dev" >> $GITHUB_ENV
-            echo "HOST_PORT=3003" >> $GITHUB_ENV
+            echo "HOST_PORT=3000" >> $GITHUB_ENV
           fi
 
       - name: Set up SSH
