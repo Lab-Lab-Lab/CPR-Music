@@ -43,7 +43,9 @@ jobs:
             cd ${{ env.DEPLOY_DIR }}
   
             echo "Pulling latest changes..."
-            git pull origin ${{ github.ref_name }} 
+            git pull origin ${{ github.ref_name }}
+
+            echo "SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
 
             echo "Stopping and removing old container"
             docker stop ${{ env.CONTAINER_NAME }}|| true
@@ -53,7 +55,7 @@ jobs:
             docker rmi ${{ env.IMAGE_NAME }} || true
 
             echo "Building new image..."
-            docker build --build-arg SECRET=${{ secrets.NEXTAUTH_SECRET }} -t ${{ env.IMAGE_NAME }} .
+            docker build -t ${{ env.IMAGE_NAME }} .
 
             echo "Starting new container..."
             docker run -d --name ${{ env.CONTAINER_NAME }} -p ${{ env.HOST_PORT }}:3000 ${{ env.IMAGE_NAME }}
