@@ -45,8 +45,6 @@ jobs:
             echo "Pulling latest changes..."
             git pull origin ${{ github.ref_name }}
 
-            echo $'\nSECRET=${{ secrets.NEXTAUTH_SECRET }}' >> .env.production
-
             echo "Stopping and removing old container"
             docker stop ${{ env.CONTAINER_NAME }}|| true
             docker rm ${{ env.CONTAINER_NAME }}|| true
