@@ -49,6 +49,9 @@ jobs:
             docker stop ${{ env.CONTAINER_NAME }}|| true
             docker rm ${{ env.CONTAINER_NAME }}|| true
 
+            echo "Removing old container"
+            docker rmi ${{ env.IMAGE_NAME }} || true
+
             echo "Building new image..."
             docker build -t ${{ env.IMAGE_NAME }} .
 
