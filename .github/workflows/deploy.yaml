@@ -46,6 +46,11 @@ jobs:
             echo "Pulling latest changes..."
             git pull origin ${{ github.ref_name }}
 
+            if [[ "${{ github.ref}}" == "refs/heads/main" ]]; then
+              echo "NEXT_PUBLIC_BACKEND_HOST=https://api.musiccpr.org" >> .env.production
+              echo "NEXTAUTH_URL=https://musiccpr.org" >> .env.production
+            fi
+
             echo "Stopping and removing old container"
             docker stop ${{ env.CONTAINER_NAME }}|| true
             docker rm ${{ env.CONTAINER_NAME }}|| true
