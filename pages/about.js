@@ -279,7 +279,7 @@ function About() {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://mfwolffe.github.io/"
+            href="https://musicsian.com/"
           >
             Matt Wolffe 
           </a>{' '}
