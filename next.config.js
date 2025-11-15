@@ -17,6 +17,7 @@ module.exports = {
   //   defaultLocale: 'en',
   // },
   output: 'export',
+  basePath: `${process.env.PAGES_BASE_PATH}`,
 };
 
 // Injected content via Sentry wizard below
