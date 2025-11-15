@@ -17,7 +17,7 @@ module.exports = {
   //   defaultLocale: 'en',
   // },
   output: 'export',
-  basePath: `${process.env.PAGES_BASE_PATH}`,
+  // basePath: `${process.env.PAGES_BASE_PATH}`, // needed this before the DNS A Records propagated.
 };
 
 // Injected content via Sentry wizard below
