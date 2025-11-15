@@ -60,7 +60,6 @@ jobs:
               uses: actions/upload-pages-artifact@v3
               with:
                   path: ./out
-
     deploy:
         environment:
             name: github-pages

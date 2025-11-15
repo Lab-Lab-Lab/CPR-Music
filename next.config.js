@@ -12,10 +12,11 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
+  // i18n: {
+  //   locales: ['en'],
+  //   defaultLocale: 'en',
+  // },
+  output: 'export',
 };
 
 // Injected content via Sentry wizard below
