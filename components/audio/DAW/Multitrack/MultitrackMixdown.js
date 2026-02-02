@@ -9,6 +9,241 @@ import { createInstrument } from './Instruments/WebAudioInstruments';
 import VoiceManager from '../../../../lib/VoiceManager';
 import midiRenderCache from '../../../../lib/MIDIRenderCache';
 import EnhancedSynth from '../../../../lib/EnhancedSynth';
+import { processEffectsChain } from '../../../../lib/effects/UnifiedEffectsProcessor';
+import { debugLog, debugWarn, debugError } from '../../../../lib/debug';
+import { getPPQ, getTrackTempo, DEFAULT_PPQ, DEFAULT_TEMPO } from '../../../../lib/midiTimeUtils';
+
+/**
+ * OfflineAudioContext Manager
+ * Tracks active contexts and provides cleanup functionality
+ * Prevents memory leaks from orphaned audio contexts
+ */
+class OfflineContextManager {
+  constructor() {
+    this.activeContexts = new Map(); // id -> { context, createdAt, purpose }
+    this.contextIdCounter = 0;
+    this.maxConcurrent = 10; // Maximum concurrent contexts before warning
+  }
+
+  /**
+   * Create a managed OfflineAudioContext
+   * @param {number} channels - Number of channels
+   * @param {number} length - Length in samples
+   * @param {number} sampleRate - Sample rate
+   * @param {string} purpose - Description for debugging
+   * @returns {Object} { context, id, cleanup }
+   */
+  create(channels, length, sampleRate, purpose = 'unknown') {
+    // Validate parameters
+    if (!Number.isFinite(length) || length <= 0) {
+      throw new Error(`Invalid OfflineAudioContext length: ${length}`);
+    }
+    if (!Number.isFinite(sampleRate) || sampleRate <= 0) {
+      throw new Error(`Invalid OfflineAudioContext sampleRate: ${sampleRate}`);
+    }
+
+    // Warn if too many concurrent contexts
+    if (this.activeContexts.size >= this.maxConcurrent) {
+      debugWarn('OfflineContextManager',
+        `High number of active contexts (${this.activeContexts.size}). ` +
+        `Consider cleaning up old contexts to prevent memory issues.`
+      );
+    }
+
+    const id = `offline_${++this.contextIdCounter}_${Date.now()}`;
+    const context = new OfflineAudioContext(channels, length, sampleRate);
+
+    this.activeContexts.set(id, {
+      context,
+      createdAt: Date.now(),
+      purpose,
+      length,
+      sampleRate,
+    });
+
+    debugLog('OfflineContextManager',
+      `Created context ${id} for "${purpose}" (${(length / sampleRate).toFixed(2)}s, ${this.activeContexts.size} active)`
+    );
+
+    // Return context with cleanup function
+    const cleanup = () => this.release(id);
+
+    return { context, id, cleanup };
+  }
+
+  /**
+   * Release a context and its resources
+   */
+  release(id) {
+    const entry = this.activeContexts.get(id);
+    if (!entry) return false;
+
+    this.activeContexts.delete(id);
+    debugLog('OfflineContextManager',
+      `Released context ${id} (${this.activeContexts.size} remaining)`
+    );
+
+    return true;
+  }
+
+  /**
+   * Release all contexts older than maxAgeMs
+   */
+  releaseStale(maxAgeMs = 5 * 60 * 1000) { // Default 5 minutes
+    const now = Date.now();
+    let released = 0;
+
+    for (const [id, entry] of this.activeContexts.entries()) {
+      if (now - entry.createdAt > maxAgeMs) {
+        this.activeContexts.delete(id);
+        released++;
+        debugLog('OfflineContextManager', `Released stale context ${id} (age: ${((now - entry.createdAt) / 1000).toFixed(0)}s)`);
+      }
+    }
+
+    if (released > 0) {
+      debugLog('OfflineContextManager', `Released ${released} stale contexts`);
+    }
+
+    return released;
+  }
+
+  /**
+   * Release all contexts
+   */
+  releaseAll() {
+    const count = this.activeContexts.size;
+    this.activeContexts.clear();
+    debugLog('OfflineContextManager', `Released all ${count} contexts`);
+    return count;
+  }
+
+  /**
+   * Get stats about active contexts
+   */
+  getStats() {
+    const stats = {
+      activeCount: this.activeContexts.size,
+      totalCreated: this.contextIdCounter,
+      contexts: [],
+    };
+
+    for (const [id, entry] of this.activeContexts.entries()) {
+      stats.contexts.push({
+        id,
+        purpose: entry.purpose,
+        ageMs: Date.now() - entry.createdAt,
+        durationSec: entry.length / entry.sampleRate,
+      });
+    }
+
+    return stats;
+  }
+
+  /**
+   * Render an OfflineAudioContext with timeout and progress tracking
+   *
+   * @param {OfflineAudioContext} context - The context to render
+   * @param {Object} options - Rendering options
+   * @param {number} options.timeoutMs - Maximum time to wait (default: 60000ms = 1 minute)
+   * @param {Function} options.onProgress - Progress callback: (percent, elapsedMs) => void
+   * @param {number} options.progressIntervalMs - How often to call onProgress (default: 500ms)
+   * @returns {Promise<AudioBuffer>} The rendered audio buffer
+   * @throws {Error} If rendering times out or fails
+   */
+  async renderWithTimeout(context, options = {}) {
+    const {
+      timeoutMs = 60000,
+      onProgress = null,
+      progressIntervalMs = 500,
+    } = options;
+
+    const startTime = Date.now();
+    const expectedDuration = context.length / context.sampleRate;
+
+    // Calculate reasonable timeout based on audio length
+    // Allow at least 2x real-time for complex processing, minimum 30s
+    const adaptiveTimeout = Math.max(
+      timeoutMs,
+      Math.max(30000, expectedDuration * 2000)
+    );
+
+    let progressInterval = null;
+    let lastProgress = 0;
+
+    // Set up progress tracking
+    if (onProgress) {
+      progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+
+        // Estimate progress based on elapsed time vs expected
+        // This is approximate since we can't get actual render progress
+        const estimatedProgress = Math.min(
+          99,
+          Math.round((elapsed / (expectedDuration * 1000)) * 100)
+        );
+
+        if (estimatedProgress > lastProgress) {
+          lastProgress = estimatedProgress;
+          onProgress(estimatedProgress, elapsed);
+        }
+      }, progressIntervalMs);
+    }
+
+    try {
+      // Create a promise race between rendering and timeout
+      const renderPromise = context.startRendering();
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(
+            `Offline rendering timed out after ${adaptiveTimeout}ms ` +
+            `(expected ~${expectedDuration.toFixed(1)}s of audio)`
+          ));
+        }, adaptiveTimeout);
+      });
+
+      const buffer = await Promise.race([renderPromise, timeoutPromise]);
+
+      // Report completion
+      if (onProgress) {
+        onProgress(100, Date.now() - startTime);
+      }
+
+      const renderTime = Date.now() - startTime;
+      const realtimeRatio = renderTime / (expectedDuration * 1000);
+
+      debugLog('OfflineContextManager',
+        `Rendered ${expectedDuration.toFixed(2)}s in ${renderTime}ms ` +
+        `(${realtimeRatio.toFixed(2)}x real-time)`
+      );
+
+      return buffer;
+    } catch (error) {
+      debugError('OfflineContextManager', `Render failed: ${error.message}`);
+      throw error;
+    } finally {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+    }
+  }
+}
+
+// Singleton instance
+const offlineContextManager = new OfflineContextManager();
+
+// Cleanup stale contexts periodically (every 2 minutes)
+if (typeof window !== 'undefined') {
+  setInterval(() => {
+    offlineContextManager.releaseStale();
+  }, 2 * 60 * 1000);
+
+  // Cleanup all on page unload
+  window.addEventListener('beforeunload', () => {
+    offlineContextManager.releaseAll();
+  });
+}
 
 /** Numeric helper: safe conversion with default */
 function toNumber(val, def = 0) {
@@ -50,38 +285,136 @@ function makeSoftClipCurve(samples = 4096, drive = 0.85) {
   return curve;
 }
 
-// Compute any track-level MIDI time offsets expressed in seconds or beats
-function getTrackMidiBaseOffsetSec(track, secPerBeat) {
-  let sec = 0;
-  const addSec = (v) => {
-    const n = Number(v);
-    if (Number.isFinite(n)) sec += n;
-  };
-  const addBeats = (v) => {
-    const n = Number(v);
-    if (Number.isFinite(n)) sec += n * secPerBeat;
+/**
+ * Compute track-level MIDI time offset in seconds.
+ *
+ * OFFSET PRECEDENCE (highest to lowest priority):
+ * 1. track.midiOffsetSec - Explicit offset in seconds (highest priority)
+ * 2. track.midiOffsetBeats - Explicit offset in beats
+ * 3. track.pianoRollOffsetSec - Piano roll specific offset in seconds
+ * 4. track.pianoRollOffsetBeats - Piano roll specific offset in beats
+ * 5. track.midiData.offsetSec - MIDI data embedded offset in seconds
+ * 6. track.midiData.offsetBeats - MIDI data embedded offset in beats
+ * 7. track.piano.offsetSec - Legacy piano offset
+ * 8. track.start (only for MIDI tracks) - Track start position in seconds
+ * 9. track.startBeat (only for MIDI tracks) - Track start position in beats
+ *
+ * IMPORTANT: Only ONE offset source should be used per category to avoid double-counting.
+ * The function uses precedence-based selection, not accumulation.
+ *
+ * @param {Object} track - Track object containing offset information
+ * @param {number} secPerBeat - Seconds per beat for beat-to-seconds conversion
+ * @param {Object} options - Optional configuration
+ * @param {boolean} options.warnOnMultiple - Log warning if multiple offset sources found (default: true in debug mode)
+ * @returns {number} Offset in seconds (always >= 0)
+ */
+function getTrackMidiBaseOffsetSec(track, secPerBeat, options = {}) {
+  if (!track) return 0;
+
+  const { warnOnMultiple = true } = options;
+  const foundSources = [];
+
+  // Helper to safely convert to number
+  const toSec = (val, source) => {
+    const n = Number(val);
+    if (Number.isFinite(n) && n !== 0) {
+      foundSources.push({ source, value: n, unit: 'sec' });
+      return n;
+    }
+    return null;
   };
 
-  addSec(track?.midiOffsetSec);
-  addSec(track?.pianoRollOffsetSec);
-  addSec(track?.midiData?.offsetSec);
-  addSec(track?.piano?.offsetSec);
-  if (track?.type === 'midi' || track?.kind === 'midi') {
-    addSec(track?.start);
-    addBeats(track?.startBeat);
+  const toSecFromBeats = (val, source) => {
+    const n = Number(val);
+    if (Number.isFinite(n) && n !== 0 && Number.isFinite(secPerBeat)) {
+      const sec = n * secPerBeat;
+      foundSources.push({ source, value: n, unit: 'beats', convertedSec: sec });
+      return sec;
+    }
+    return null;
+  };
+
+  // Determine offset using precedence (first valid value wins per category)
+  let offsetSec = 0;
+
+  // Category 1: Explicit track-level offset (prefer seconds over beats)
+  const explicitSecOffset = toSec(track.midiOffsetSec, 'track.midiOffsetSec');
+  const explicitBeatOffset = toSecFromBeats(track.midiOffsetBeats, 'track.midiOffsetBeats');
+
+  if (explicitSecOffset !== null) {
+    offsetSec = explicitSecOffset;
+  } else if (explicitBeatOffset !== null) {
+    offsetSec = explicitBeatOffset;
   }
-  addBeats(track?.midiOffsetBeats);
-  addBeats(track?.midiData?.offsetBeats);
-  addBeats(track?.pianoRollOffsetBeats);
 
-  return Math.max(0, sec);
+  // Category 2: Piano roll offset (only if no explicit offset)
+  if (offsetSec === 0) {
+    const pianoSecOffset = toSec(track.pianoRollOffsetSec, 'track.pianoRollOffsetSec');
+    const pianoBeatOffset = toSecFromBeats(track.pianoRollOffsetBeats, 'track.pianoRollOffsetBeats');
+
+    if (pianoSecOffset !== null) {
+      offsetSec = pianoSecOffset;
+    } else if (pianoBeatOffset !== null) {
+      offsetSec = pianoBeatOffset;
+    }
+  }
+
+  // Category 3: MIDI data embedded offset (only if no higher priority offset)
+  if (offsetSec === 0 && track.midiData) {
+    const midiDataSecOffset = toSec(track.midiData.offsetSec, 'track.midiData.offsetSec');
+    const midiDataBeatOffset = toSecFromBeats(track.midiData.offsetBeats, 'track.midiData.offsetBeats');
+
+    if (midiDataSecOffset !== null) {
+      offsetSec = midiDataSecOffset;
+    } else if (midiDataBeatOffset !== null) {
+      offsetSec = midiDataBeatOffset;
+    }
+  }
+
+  // Category 4: Legacy piano offset
+  if (offsetSec === 0 && track.piano) {
+    const pianoOffsetSec = toSec(track.piano.offsetSec, 'track.piano.offsetSec');
+    if (pianoOffsetSec !== null) {
+      offsetSec = pianoOffsetSec;
+    }
+  }
+
+  // Category 5: Track start position (only for MIDI tracks)
+  if (offsetSec === 0 && (track.type === 'midi' || track.kind === 'midi')) {
+    const startSecOffset = toSec(track.start, 'track.start');
+    const startBeatOffset = toSecFromBeats(track.startBeat, 'track.startBeat');
+
+    if (startSecOffset !== null) {
+      offsetSec = startSecOffset;
+    } else if (startBeatOffset !== null) {
+      offsetSec = startBeatOffset;
+    }
+  }
+
+  // Warn if multiple offset sources were found (potential data inconsistency)
+  if (warnOnMultiple && foundSources.length > 1) {
+    debugWarn('MultitrackMixdown',
+      `Track "${track.name || track.id || 'unknown'}" has ${foundSources.length} offset sources defined. ` +
+      `Using highest priority: ${foundSources[0]?.source}. ` +
+      `Other sources: ${foundSources.slice(1).map(s => s.source).join(', ')}`
+    );
+  }
+
+  // Validate result
+  const result = Math.max(0, offsetSec);
+
+  // Warn if offset seems unreasonably large (> 10 minutes)
+  if (result > 600) {
+    debugWarn('MultitrackMixdown',
+      `Track "${track.name || track.id || 'unknown'}" has unusually large offset: ${result.toFixed(2)}s`
+    );
+  }
+
+  return result;
 }
 
-// Helper to get PPQ (ticks per quarter note) from a track, with guard
-function getPPQ(track) {
-  const ppq = Number(track?.midiData?.ppq || track?.ppq || 480);
-  return Number.isFinite(ppq) && ppq > 0 ? ppq : 480;
-}
+// NOTE: getPPQ is now imported from midiTimeUtils.js for consistency
+// It provides the same functionality with documented precedence
 
 function collectTrackMidiNotes(track, tempo = { bpm: 120, stepsPerBeat: 4 }) {
   const out = [];
@@ -931,8 +1264,13 @@ async function renderMIDITrackToAudio(track, sampleRate = 44100, bpm = 120) {
 
   console.log(`🎵 MIXDOWN: Rendering ${track.name} (${midiNotes.length} notes, duration: ${duration.toFixed(2)}s, endTime: ${endTime.toFixed(2)}s)`);
 
-  // Create offline context for rendering
-  const offline = new OfflineAudioContext(2, Math.ceil(duration * sampleRate), sampleRate);
+  // Create offline context for rendering using managed context
+  const { context: offline, cleanup: cleanupContext } = offlineContextManager.create(
+    2,
+    Math.ceil(duration * sampleRate),
+    sampleRate,
+    `MIDI render: ${track.name}`
+  );
 
   // Try to use existing virtual instruments first, then fall back to enhanced synth
   let instrument = null;
@@ -1053,9 +1391,11 @@ async function renderMIDITrackToAudio(track, sampleRate = 44100, bpm = 120) {
   try {
     const rendered = await offline.startRendering();
     midiRenderCache.setCached(track, rendered);
+    cleanupContext(); // Release the offline context
     return rendered;
   } catch (e) {
     console.error('MIDI auto-render failed:', e);
+    cleanupContext(); // Release context even on failure
     return null;
   }
 }
@@ -1111,10 +1451,111 @@ async function renderMIDIWithFallbackSynth(offline, midiNotes, destination) {
     };
 
     voiceManager.allocateVoice(midiNote, stopCallback, env);
-    
+
     try {
       osc.start(start);
     } catch {}
+  }
+}
+
+/**
+ * Process track effects on an audio buffer
+ * Applies the track's effects chain to the given buffer
+ * @param {AudioBuffer} buffer - Audio buffer to process
+ * @param {Object} track - Track with effects array
+ * @param {AudioContext} audioContext - Audio context for processing
+ * @returns {Promise<AudioBuffer>} - Processed buffer (or original if no effects)
+ */
+async function processTrackEffects(buffer, track, audioContext) {
+  // Skip if no effects or all effects disabled
+  const enabledEffects = (track.effects || []).filter(e => e.enabled !== false);
+  if (enabledEffects.length === 0) {
+    return buffer;
+  }
+
+  debugLog('MultitrackMixdown', `Processing ${enabledEffects.length} effects for track: ${track.name}`);
+
+  try {
+    // Process entire buffer through effects chain
+    const processedBuffer = await processEffectsChain(
+      buffer,
+      0, // startSample
+      buffer.length, // endSample
+      enabledEffects,
+      audioContext
+    );
+
+    debugLog('MultitrackMixdown', `Track effects processed successfully: ${track.name}`);
+    return processedBuffer;
+  } catch (error) {
+    debugError('MultitrackMixdown', `Failed to process effects for track ${track.name}:`, error);
+    // Return original buffer if effects processing fails
+    return buffer;
+  }
+}
+
+/**
+ * Pre-render a track's audio clips to a single buffer for effects processing
+ * @param {Object} track - Track with clips
+ * @param {Map} bufferMap - Map of source URLs to decoded buffers
+ * @param {number} duration - Total duration in seconds
+ * @param {number} sampleRate - Sample rate
+ * @returns {Promise<AudioBuffer|null>} - Combined buffer or null if no clips
+ */
+async function prerenderTrackClipsToBuffer(track, bufferMap, duration, sampleRate) {
+  const clips = track.clips || [];
+  if (clips.length === 0) return null;
+
+  // Create offline context for the track using managed context
+  const { context: offline, cleanup: cleanupContext } = offlineContextManager.create(
+    2,
+    Math.ceil(duration * sampleRate),
+    sampleRate,
+    `Prerender track: ${track.name}`
+  );
+
+  const masterGain = offline.createGain();
+  masterGain.gain.value = 1;
+  masterGain.connect(offline.destination);
+
+  let hasAudio = false;
+
+  // Schedule all clips
+  clips.forEach((c) => {
+    const buf = bufferMap.get(c?.src);
+    if (!buf) return;
+
+    const start = Math.max(0, toNumber(c?.start, 0));
+    const offset = Math.max(0, toNumber(c?.offset, 0));
+    const maxDur = Math.max(0, buf.duration - offset);
+    const clipDur = Math.max(0, Math.min(toNumber(c?.duration, 0), maxDur));
+    if (!(clipDur > 0)) return;
+
+    const src = offline.createBufferSource();
+    src.buffer = buf;
+    src.connect(masterGain);
+
+    try {
+      src.start(start, offset, clipDur);
+      hasAudio = true;
+    } catch (e) {
+      debugWarn('MultitrackMixdown', `Failed to schedule clip: ${e.message}`);
+    }
+  });
+
+  if (!hasAudio) {
+    cleanupContext(); // Release context if no audio
+    return null;
+  }
+
+  try {
+    const rendered = await offline.startRendering();
+    cleanupContext(); // Release the context after rendering
+    return rendered;
+  } catch (error) {
+    debugError('MultitrackMixdown', `Failed to prerender track ${track.name}:`, error);
+    cleanupContext(); // Release context even on failure
+    return null;
   }
 }
 
@@ -1265,9 +1706,14 @@ async function mixdownClipsAndMidi(
 
   // Using the sample rate that was calculated earlier for MIDI rendering
 
-  // Create OfflineAudioContext
+  // Create OfflineAudioContext using managed context
   const length = Math.ceil(projectDuration * highestRate);
-  const offline = new OfflineAudioContext(2, length, highestRate);
+  const { context: offline, cleanup: cleanupMainContext } = offlineContextManager.create(
+    2,
+    length,
+    highestRate,
+    'Main mixdown render'
+  );
 
   // Calculate adaptive gain based on mix complexity (reuse midiTracks from above)
   const analogTracks = included.filter(t => t.type !== 'midi');
@@ -1320,7 +1766,56 @@ async function mixdownClipsAndMidi(
   safetyLimiter.connect(gentleClipper);
   gentleClipper.connect(offline.destination);
   
-  console.log('🎛️ Professional Master Bus: Clean signal chain with minimal processing');
+  debugLog('MultitrackMixdown', '🎛️ Professional Master Bus: Clean signal chain with minimal processing');
+
+  // Pre-process tracks with effects (needs to happen before main render loop)
+  // This creates processed buffers for tracks that have effects
+  const processedTrackBuffers = new Map();
+
+  // Check which tracks need effects processing
+  const tracksWithEffects = included.filter(
+    (t) => t.effects && t.effects.length > 0 && t.effects.some((e) => e.enabled !== false)
+  );
+
+  if (tracksWithEffects.length > 0) {
+    debugLog('MultitrackMixdown', `Processing effects for ${tracksWithEffects.length} tracks...`);
+
+    await Promise.all(
+      tracksWithEffects.map(async (track) => {
+        try {
+          let trackBuffer = null;
+
+          // For MIDI tracks, use the pre-rendered MIDI buffer
+          if (track.type === 'midi' && midiBufferMap.has(track.id)) {
+            trackBuffer = midiBufferMap.get(track.id);
+          } else if (track.clips && track.clips.length > 0) {
+            // For audio tracks, pre-render clips to a single buffer
+            trackBuffer = await prerenderTrackClipsToBuffer(
+              track,
+              bufferMap,
+              projectDuration,
+              highestRate
+            );
+          }
+
+          if (trackBuffer) {
+            // Apply effects to the track buffer
+            const processedBuffer = await processTrackEffects(
+              trackBuffer,
+              track,
+              offline // Use offline context for processing
+            );
+            processedTrackBuffers.set(track.id, processedBuffer);
+            debugLog('MultitrackMixdown', `Effects applied to track: ${track.name}`);
+          }
+        } catch (error) {
+          debugError('MultitrackMixdown', `Error processing effects for ${track.name}:`, error);
+        }
+      })
+    );
+  }
+
+  onProgress(72);
 
   // Process each track
   included.forEach((track) => {
@@ -1346,9 +1841,13 @@ async function mixdownClipsAndMidi(
       offlineInstrument = null; // factory not offline-safe → fallback
     }
 
-    // Check if this is a pre-rendered MIDI track
+    // Check if this track has a pre-processed buffer (with effects applied)
+    const processedBuffer = processedTrackBuffers.get(track.id);
+    const hasProcessedEffects = !!processedBuffer;
+
+    // Check if this is a pre-rendered MIDI track (without effects)
     const midiBuffer = midiBufferMap.get(track.id);
-    const isMidiTrack = track.type === 'midi' && midiBuffer;
+    const isMidiTrack = track.type === 'midi' && midiBuffer && !hasProcessedEffects;
 
     // Set up intelligent panning
     const panner = offline.createStereoPanner
@@ -1357,10 +1856,10 @@ async function mixdownClipsAndMidi(
     if (panner) {
       const intelligentPan = intelligentPanning.get(track.id) || 0;
       panner.pan.value = intelligentPan;
-      
+
       // Log panning adjustments if different from original
       if (Math.abs(intelligentPan - (track.pan || 0)) > 0.01) {
-        console.log(`Track ${track.name}: Pan adjusted ${(track.pan || 0).toFixed(2)} → ${intelligentPan.toFixed(2)}`);
+        debugLog('MultitrackMixdown', `Track ${track.name}: Pan adjusted ${(track.pan || 0).toFixed(2)} → ${intelligentPan.toFixed(2)}`);
       }
     }
 
@@ -1372,7 +1871,21 @@ async function mixdownClipsAndMidi(
       trackGain.connect(masterGain);
     }
 
-    // Process pre-rendered MIDI audio buffer
+    // If track has processed effects, use the pre-processed buffer
+    if (hasProcessedEffects) {
+      const src = offline.createBufferSource();
+      src.buffer = processedBuffer;
+      src.connect(trackGain);
+      try {
+        src.start(0);
+        debugLog('MultitrackMixdown', `Playing effects-processed buffer for: ${track.name}`);
+      } catch (e) {
+        debugWarn('MultitrackMixdown', `Failed to start processed buffer for ${track.name}:`, e);
+      }
+      return; // Skip normal clip processing for this track
+    }
+
+    // Process pre-rendered MIDI audio buffer (no effects)
     if (isMidiTrack) {
       const src = offline.createBufferSource();
       src.buffer = midiBuffer;
@@ -1380,11 +1893,11 @@ async function mixdownClipsAndMidi(
       try {
         src.start(0); // Start at beginning of mixdown timeline
       } catch (e) {
-        console.warn(`Failed to start MIDI buffer for ${track.name}:`, e);
+        debugWarn('MultitrackMixdown', `Failed to start MIDI buffer for ${track.name}:`, e);
       }
     }
 
-    // Process audio clips
+    // Process audio clips (for tracks without effects)
     (track.clips || []).forEach((c) => {
       const buf = bufferMap.get(c?.src);
       if (!buf) return;
@@ -1437,7 +1950,11 @@ async function mixdownClipsAndMidi(
     mixAnalysis.recommendations.forEach(rec => console.log(`  ${rec}`));
     
     onProgress(100);
+    cleanupMainContext(); // Release the main mixdown context
     return rendered;
+  } catch (renderError) {
+    cleanupMainContext(); // Release context even on failure
+    throw renderError;
   } finally {
     // Always clear the mixdown flag, even if rendering fails
     if (typeof window !== 'undefined') {
