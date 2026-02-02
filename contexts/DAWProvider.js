@@ -55,3 +55,14 @@ export { useFFmpeg } from './FFmpegContext';
 export { useUI } from './UIContext';
 export { useMultitrack } from './MultitrackContext';
 export { useWaveform } from './WaveformContext';
+
+// Export modular effect hooks for better performance
+// Components using these will only re-render when their specific effect state changes
+export {
+  useEQ,
+  useDynamics,
+  useModulation,
+  useTimeBased,
+  useSpecialEffects,
+  useGlobalEffects,
+} from './EffectsContext';
