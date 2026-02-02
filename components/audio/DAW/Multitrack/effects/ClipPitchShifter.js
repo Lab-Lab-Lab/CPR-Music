@@ -22,12 +22,49 @@ const PitchShifterTooltips = {
   mix: "Balance between dry and wet signal. 100% replaces original pitch entirely. 50% creates harmony. Lower values add subtle pitch character."
 };
 
-// Quality settings for pitch shifting
+/**
+ * Quality Presets for Pitch Shifting
+ *
+ * Trade-offs between quality and performance:
+ *
+ * | Quality | FFT Size | Latency   | CPU Usage | Best For                    |
+ * |---------|----------|-----------|-----------|-----------------------------
+ * | Low     | 1024     | ~23ms     | Low       | Real-time preview, low-end  |
+ * | Medium  | 2048     | ~46ms     | Medium    | Live monitoring, rehearsal  |
+ * | High    | 4096     | ~93ms     | High      | Final mix, vocals, solo     |
+ * | Ultra   | 8192     | ~186ms    | Very High | Critical vocals, mastering  |
+ *
+ * Notes:
+ * - Larger FFT = better frequency resolution = fewer "chipmunk" artifacts
+ * - Smaller FFT = faster processing = lower latency but more artifacts
+ * - For vocals: Use High or Ultra with formant correction ON
+ * - For instruments: Medium usually sufficient
+ * - For real-time playback: Low or Medium recommended
+ * - Ultra can cause audible delay, best for offline rendering
+ *
+ * Latency calculated at 44.1kHz: latency = fftSize / sampleRate
+ */
 const QualitySettings = {
-  low: { name: 'Low (Fast)', fftSize: 1024 },
-  medium: { name: 'Medium', fftSize: 2048 },
-  high: { name: 'High', fftSize: 4096 },
-  ultra: { name: 'Ultra (Slow)', fftSize: 8192 }
+  low: {
+    name: 'Low (Fast)',
+    fftSize: 1024,
+    description: 'Low latency (~23ms), some artifacts. Good for previews.',
+  },
+  medium: {
+    name: 'Medium',
+    fftSize: 2048,
+    description: 'Balanced (~46ms latency). Good for most instruments.',
+  },
+  high: {
+    name: 'High',
+    fftSize: 4096,
+    description: 'High quality (~93ms). Recommended for vocals and final mix.',
+  },
+  ultra: {
+    name: 'Ultra (Slow)',
+    fftSize: 8192,
+    description: 'Maximum quality (~186ms). Best for critical vocals/mastering.',
+  },
 };
 
 /**

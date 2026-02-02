@@ -18,33 +18,63 @@ const PitchShifterTooltips = {
 };
 
 /**
- * Quality settings for pitch shifting
+ * Quality Presets for Pitch Shifting
+ *
+ * Trade-offs between quality and performance:
+ *
+ * | Quality | FFT Size | Overlap | Latency  | Use Case                      |
+ * |---------|----------|---------|----------|-------------------------------
+ * | Low     | 1024     | 25%     | ~23ms    | Real-time, preview, low-end   |
+ * | Medium  | 2048     | 50%     | ~46ms    | Live playback, instruments    |
+ * | High    | 4096     | 75%     | ~93ms    | Final mix, vocals             |
+ * | Ultra   | 8192     | 87.5%   | ~186ms   | Mastering, critical vocals    |
+ *
+ * Quality factors:
+ * - FFT Size: Larger = better frequency resolution, less "chipmunk" artifacts
+ * - Overlap: Higher = smoother transitions, less phasiness
+ * - Formant Correction: Preserves vocal character (recommended for High/Ultra)
+ *
+ * Recommendations:
+ * - Vocals: High or Ultra with formant correction
+ * - Instruments: Medium usually sufficient
+ * - Real-time preview: Low (higher may cause audible delay)
+ * - Offline render: Ultra for best quality
+ *
+ * CPU Impact:
+ * - Low: ~1x baseline
+ * - Medium: ~2x baseline
+ * - High: ~4x baseline
+ * - Ultra: ~8-10x baseline (may cause audio dropouts on slower systems)
  */
 const QualitySettings = {
-  low: { 
-    name: 'Low (Fast)', 
-    fftSize: 1024, 
+  low: {
+    name: 'Low (Fast)',
+    fftSize: 1024,
     overlap: 0.25,
-    formantCorrection: false
+    formantCorrection: false,
+    description: 'Quick preview, some artifacts. ~23ms latency.',
   },
-  medium: { 
-    name: 'Medium', 
-    fftSize: 2048, 
+  medium: {
+    name: 'Medium',
+    fftSize: 2048,
     overlap: 0.5,
-    formantCorrection: false
+    formantCorrection: false,
+    description: 'Good for instruments. ~46ms latency.',
   },
-  high: { 
-    name: 'High', 
-    fftSize: 4096, 
+  high: {
+    name: 'High',
+    fftSize: 4096,
     overlap: 0.75,
-    formantCorrection: true
+    formantCorrection: true,
+    description: 'Recommended for vocals. ~93ms latency.',
   },
-  ultra: { 
-    name: 'Ultra (Slow)', 
-    fftSize: 8192, 
+  ultra: {
+    name: 'Ultra (Slow)',
+    fftSize: 8192,
     overlap: 0.875,
-    formantCorrection: true
-  }
+    formantCorrection: true,
+    description: 'Best quality, high CPU. ~186ms latency.',
+  },
 };
 
 /**
