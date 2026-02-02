@@ -120,11 +120,33 @@ export default function Knob({
   
   return (
     <div className="text-center">
-      <div 
+      <div
         ref={knobRef}
         className={styles.knobContainer}
         style={{ width: size, height: size }}
         onMouseDown={handleMouseDown}
+        role="slider"
+        tabIndex={0}
+        aria-label={label || 'Knob control'}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={internalValue}
+        aria-valuetext={displayText}
+        onKeyDown={(e) => {
+          // Keyboard support for accessibility
+          let delta = 0;
+          if (e.key === 'ArrowUp' || e.key === 'ArrowRight') delta = step;
+          else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') delta = -step;
+          else if (e.key === 'Home') { onChange && onChange(min); return; }
+          else if (e.key === 'End') { onChange && onChange(max); return; }
+          else return;
+
+          e.preventDefault();
+          const newValue = Math.max(min, Math.min(max, internalValue + delta));
+          const steppedValue = Math.round(newValue / step) * step;
+          setInternalValue(steppedValue);
+          onChange && onChange(steppedValue);
+        }}
       >
         <svg 
           width={size} 
