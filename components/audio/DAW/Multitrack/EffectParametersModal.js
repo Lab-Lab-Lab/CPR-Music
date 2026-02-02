@@ -5,14 +5,104 @@ import { Modal, Button, Alert, Spinner, Container, Row, Col, Form, Dropdown } fr
 import { FaCog, FaCheck, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import { useMultitrack } from '../../../../contexts/MultitrackContext';
 import Knob from '../../../Knob';
+import { debugLog, debugError } from '../../../../lib/debug';
 
-// Import processing functions from mono editor effects
-// TODO: Import these when the processing functions are properly exported
-// import { processTremoloRegion } from '../Effects/Tremolo';
-// import { processReverbRegion } from '../Effects/Reverb';
-// import { processEQRegion } from '../Effects/EQ';
+// Effect processing is handled by UnifiedEffectsProcessor during mixdown.
+// Effects are stored on tracks and processed when the multitrack is mixed down.
 
-// Effect parameter configurations based on mono editor components
+/**
+ * @typedef {Object} DropdownOption
+ * @property {string} key - Unique identifier for the option
+ * @property {string} name - Display name for the option
+ */
+
+/**
+ * @typedef {Object} KnobParameterConfig
+ * @property {number} min - Minimum value
+ * @property {number} max - Maximum value
+ * @property {number} step - Step increment
+ * @property {number} default - Default value
+ * @property {string} label - Display label
+ * @property {string} unit - Unit suffix (%, Hz, dB, ms, etc.)
+ * @property {string} color - Knob color (hex)
+ * @property {number} [multiplier] - Optional display multiplier for unit conversion
+ *
+ * ## Multiplier Convention
+ *
+ * The `multiplier` field converts internal values to display units:
+ * - displayValue = internalValue * multiplier
+ *
+ * Common patterns:
+ * - Seconds to milliseconds: { unit: 'ms', multiplier: 1000 }
+ *   - Internal: 0.003 (3ms attack time stored in seconds)
+ *   - Display: "3ms" (0.003 * 1000 = 3)
+ *
+ * Why use multipliers:
+ * - Audio APIs work in seconds (Web Audio API standard)
+ * - Users expect milliseconds for time parameters
+ * - Internal value stays in standard units for processing
+ * - Only display is converted for human readability
+ *
+ * Effects using multipliers:
+ * - compressor.attack/release: seconds → ms display
+ * - reverseReverb.buildupTime/fadeTime: seconds → ms display
+ */
+
+/**
+ * @typedef {Object} DropdownParameterConfig
+ * @property {'dropdown'} type - Parameter type
+ * @property {DropdownOption[]} options - Available options
+ * @property {string} default - Default option key
+ * @property {string} label - Display label
+ */
+
+/**
+ * @typedef {Object} EffectConfig
+ * @property {string} name - Display name
+ * @property {string} category - Effect category (Modulation, Space, Dynamics, etc.)
+ * @property {string} description - Brief description
+ * @property {Object.<string, KnobParameterConfig|DropdownParameterConfig>} parameters - Parameter definitions
+ */
+
+/**
+ * Format a parameter value for display based on its unit configuration
+ *
+ * @param {number} value - The raw parameter value
+ * @param {KnobParameterConfig} paramConfig - Parameter configuration
+ * @returns {string} Formatted display string
+ */
+function formatParameterValue(value, paramConfig) {
+  const { unit, multiplier } = paramConfig;
+
+  switch (unit) {
+    case '%':
+      return `${Math.round(value * 100)}%`;
+    case '°':
+      return `${value}°`;
+    case 'Hz':
+      return `${value.toFixed(1)}Hz`;
+    case 'ms':
+      return multiplier
+        ? `${(value * multiplier).toFixed(0)}ms`
+        : `${value}ms`;
+    case 'dB':
+      return `${value.toFixed(0)}dB`;
+    case ':1':
+      return `${value.toFixed(1)}:1`;
+    case 'x':
+      return `${value.toFixed(1)}x`;
+    case 'st':
+      return `${value > 0 ? '+' : ''}${value}st`;
+    case 's':
+      return `${value.toFixed(2)}s`;
+    case '':
+    case undefined:
+    default:
+      return value.toString();
+  }
+}
+
+/** @type {Object.<string, EffectConfig>} */
 const EFFECT_CONFIGS = {
   tremolo: {
     name: 'Tremolo',
@@ -303,7 +393,16 @@ const EFFECT_CONFIGS = {
 
 const EFFECT_INFO = EFFECT_CONFIGS;
 
-// Dynamic effect parameters component
+/**
+ * Dynamic effect parameters component
+ * Renders appropriate controls (knobs, dropdowns, sliders) based on effect configuration
+ *
+ * @param {Object} props
+ * @param {string} props.effectType - The effect type key (e.g., 'reverb', 'compressor')
+ * @param {Object.<string, any>} props.parameters - Current parameter values
+ * @param {(paramName: string, value: any) => void} props.onParameterChange - Callback when parameter changes
+ * @returns {JSX.Element}
+ */
 function EffectParametersComponent({ effectType, parameters, onParameterChange }) {
   const config = EFFECT_CONFIGS[effectType];
   
@@ -377,9 +476,14 @@ function EffectParametersComponent({ effectType, parameters, onParameterChange }
                       onParameterChange(paramName, newBands);
                     }}
                     style={{ width: '100%', writingMode: 'vertical-lr' }}
+                    aria-label={`EQ band ${freqLabel}Hz gain`}
+                    aria-valuemin={-26}
+                    aria-valuemax={26}
+                    aria-valuenow={band.gain}
+                    aria-valuetext={`${band.gain.toFixed(1)} decibels`}
                   />
                   <small className="text-white d-block mt-1">{freqLabel}Hz</small>
-                  <small className="text-muted d-block">{band.gain.toFixed(1)}dB</small>
+                  <small className="text-muted d-block" aria-hidden="true">{band.gain.toFixed(1)}dB</small>
                 </Col>
               );
             })}
@@ -390,33 +494,7 @@ function EffectParametersComponent({ effectType, parameters, onParameterChange }
 
     // Standard knob parameter
     const value = parameters[paramName] !== undefined ? parameters[paramName] : paramConfig.default;
-    let displayValue = value;
-    
-    if (paramConfig.unit === '%') {
-      displayValue = `${Math.round(value * 100)}%`;
-    } else if (paramConfig.unit === '°') {
-      displayValue = `${value}°`;
-    } else if (paramConfig.unit === 'Hz') {
-      displayValue = `${value.toFixed(1)}Hz`;
-    } else if (paramConfig.unit === 'ms' && paramConfig.multiplier) {
-      displayValue = `${(value * paramConfig.multiplier).toFixed(0)}ms`;
-    } else if (paramConfig.unit === 'ms') {
-      displayValue = `${value}ms`;
-    } else if (paramConfig.unit === 'dB') {
-      displayValue = `${value.toFixed(0)}dB`;
-    } else if (paramConfig.unit === ':1') {
-      displayValue = `${value.toFixed(1)}:1`;
-    } else if (paramConfig.unit === 'x') {
-      displayValue = `${value.toFixed(1)}x`;
-    } else if (paramConfig.unit === 'st') {
-      displayValue = `${value > 0 ? '+' : ''}${value}st`;
-    } else if (paramConfig.unit === 's') {
-      displayValue = `${value.toFixed(2)}s`;
-    } else if (paramConfig.unit === '' || !paramConfig.unit) {
-      displayValue = value.toString();
-    } else {
-      displayValue = value.toString();
-    }
+    const displayValue = formatParameterValue(value, paramConfig);
 
     return (
       <Col key={paramName} xs={6} sm={4} md={3} lg={2} className="mb-3">
@@ -454,6 +532,13 @@ function EffectParametersComponent({ effectType, parameters, onParameterChange }
   );
 }
 
+/**
+ * Modal for configuring effect parameters before adding to a track
+ * Displays appropriate controls based on the selected effect type
+ * and integrates with the MultitrackContext for track updates
+ *
+ * @returns {JSX.Element|null}
+ */
 export default function EffectParametersModal() {
   const {
     showEffectParametersModal,
@@ -486,15 +571,14 @@ export default function EffectParametersModal() {
     setIsApplying(true);
 
     try {
-      // Create effect configuration for real-time processing
+      // Create effect configuration
+      // Processing is handled by UnifiedEffectsProcessor during mixdown
       const newEffect = {
         id: `${selectedEffectType}-${Date.now()}`,
         type: selectedEffectType,
         parameters: effectParameters,
         enabled: true,
-        bypass: false,
-        // Store processing function reference for multitrack use
-        processingFunction: getProcessingFunction(selectedEffectType)
+        bypass: false
       };
 
       const updatedEffects = [...(targetTrack.effects || []), newEffect];
@@ -503,25 +587,15 @@ export default function EffectParametersModal() {
         effects: updatedEffects
       });
 
-      console.log(`🎛️ Added ${effectInfo.name} to track ${targetTrack.name}:`, {
-        ...newEffect,
-        processingFunction: `${selectedEffectType}ProcessingFunction`
-      });
+      debugLog('EffectParametersModal', `Added ${effectInfo.name} to track ${targetTrack.name}`, newEffect);
 
       // Close modal on success
       handleClose();
     } catch (error) {
-      console.error('Error applying effect:', error);
+      debugError('EffectParametersModal', 'Error applying effect:', error);
     } finally {
       setIsApplying(false);
     }
-  };
-
-  // Helper function to get the processing function for an effect type
-  const getProcessingFunction = (effectType) => {
-    // TODO: Add processing function mapping when imports are working
-    console.log(`Effect processing function for ${effectType} - to be implemented`);
-    return null;
   };
 
   const handleClose = () => {
