@@ -18,7 +18,7 @@ export function addEffectToClip(clip, effectType) {
   const effects = clip.effects || [];
 
   const newEffect = {
-    id: `effect-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `effect-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
     type: effectType,
     parameters: getDefaultParameters(effectType),
     enabled: true,
@@ -179,7 +179,7 @@ export function copyEffectsToClip(sourceClip, targetClip) {
   // Deep clone effects with new IDs
   const copiedEffects = sourceClip.effects.map(effect => ({
     ...effect,
-    id: `effect-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `effect-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
     parameters: { ...effect.parameters },
   }));
 
@@ -273,7 +273,7 @@ export function applyEffectChainPreset(clip, presetName) {
   }
 
   const newEffects = preset.effects.map(effectTemplate => ({
-    id: `effect-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `effect-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
     type: effectTemplate.type,
     parameters: effectTemplate.parameters || getDefaultParameters(effectTemplate.type),
     enabled: true,
