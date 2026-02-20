@@ -33,5 +33,18 @@ yarn-error.log*
 # vercel
 .vercel
 
+# audio files for @mfwolffe DAW testing
+/public/sample_audio
 # Sentry Config File
 .env.sentry-build-plugin
+
+/public/sample_audio/
+
+# audio files for @mfwolffe DAW testing
+/public/sample_audio
+
+# asdf things
+.tool-versions
+
+# vscode things
+.vscode/settings.json

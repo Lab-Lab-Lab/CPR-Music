@@ -1,0 +1,228 @@
+/* ===================
+   WAVEFORM RENDERING 
+   =================== */
+
+/* Track Waveform Container - Main */
+.track-waveform {
+  flex: 1;
+  background-color: #2a2a2a;
+  overflow: hidden;
+  position: relative;
+  height: 120px !important;
+  max-height: 120px !important;
+  min-height: 120px !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Add grid background */
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+/* Empty waveform state with helpful text */
+.track-waveform.empty-waveform::after {
+  content: 'Drop audio file here or click Record';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 0.8rem;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Legacy waveform height support */
+.track-waveform.legacy-height {
+  height: 80px;
+  max-height: 80px;
+  min-height: 80px;
+}
+
+/* Dark background for better contrast */
+.track-waveform::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Wavesurfer Container Div */
+.track-waveform > div {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+.track-waveform > div:first-child {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Wavesurfer nested container */
+.track-waveform > div > div {
+  height: 100% !important;
+}
+
+/* Wavesurfer wave element */
+.track-waveform wave {
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Ensure canvas is above the background effect */
+.track-waveform canvas {
+  position: relative !important;
+  z-index: 2;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  max-height: none !important;
+}
+
+/* Legacy canvas max-height support */
+.track-waveform.legacy-height canvas {
+  max-height: 80px !important;
+}
+
+/* Walking waveform canvas specific */
+.track-waveform canvas[width='3000'] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  max-height: none !important;
+}
+
+/* Recording track specific waveform styles */
+.track.recording-track .track-waveform {
+  background-color: #1f1a1a;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+}
+
+/* Recording waveform container */
+.track-waveform.recording-waveform {
+  background-color: #1f1a1a;
+  border: 2px solid rgba(146, 206, 132, 0.3);
+  border-radius: 4px;
+}
+
+/* Remove the max-height constraint on walking waveform canvas */
+.track-waveform.recording-waveform canvas[width='3000'] {
+  max-height: none !important;
+  height: 100% !important;
+}
+
+/* MIDI Track Waveform Styles */
+.track.midi-track .track-waveform {
+  background-color: #1a1a2a;
+  background-image: 
+    linear-gradient(90deg, rgba(100, 149, 237, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(100, 149, 237, 0.1) 1px, transparent 1px);
+  background-size: 20px 10px;
+}
+
+.track.midi-track:hover .track-waveform {
+  background-color: #1e1e2e;
+}
+
+.track.midi-track.track-selected .track-waveform {
+  background-color: #22223a;
+  border-left: 2px solid #6495ed;
+}
+
+.track.midi-track .track-waveform canvas {
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+/* Audio Track Waveform Styles */
+.track.audio-track .track-waveform {
+  background-color: #2a2a1a;
+  background-image: 
+    linear-gradient(90deg, rgba(255, 255, 100, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 100, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Allow audio waveform canvas to fill taller audio tracks */
+.track.audio-track .track-waveform canvas {
+  height: 100% !important;
+  max-height: none !important;
+}
+
+/* Global Waveform Component Styles */
+#waveform {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--daw-grey);
+}
+
+#waveform ::part(wrapper) {
+  background-color: var(--daw-grey);
+}
+
+#waveform-container {
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+#waveform ::part(cursor) {
+  height: 100%;
+}
+
+#waveform ::part(region) {
+  background-color: rgba(0, 0, 100, 0.25) !important;
+}
+
+#waveform ::part(region-green) {
+  background-color: rgba(0, 100, 0, 0.25) !important;
+  font-size: 12px;
+  text-shadow: 0 0 2px #fff;
+}
+
+#waveform ::part(marker) {
+  background-color: rgba(0, 0, 100, 0.25) !important;
+  border: 1px solid #fff;
+  padding: 1px;
+  text-indent: 10px;
+  font-family: fantasy;
+  text-decoration: underline;
+}
+
+#waveform ::part(region-handle-right) {
+  border-right-width: 4px !important;
+  border-right-color: #fff000 !important;
+}
+
+/* Spectogram Container */
+.spct-container {
+  border-top: 2px solid #fff;
+}
+
+/* Minimap Container */
+.mmap-container {
+  background-color: var(--daw-control);
+  border-top: 1px solid #fff;
+}

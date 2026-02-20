@@ -44,6 +44,9 @@ function Navigation() {
             {piece && <NavActivityPicker />}
           </Nav>
           <Nav>
+            <Link href="/studio" passHref legacyBehavior>
+              <Nav.Link>Studio</Nav.Link>
+            </Link>
             <Link href="/about" passHref legacyBehavior>
               <Nav.Link>About</Nav.Link>
             </Link>
@@ -56,3 +59,5 @@ function Navigation() {
 }
 
 export default Navigation;
+
+

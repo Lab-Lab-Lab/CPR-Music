@@ -1,0 +1,108 @@
+/* Effects Rack Styles */
+#effects-rack {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+#effects-rack .nav-tabs {
+  border-bottom: 1px solid #444;
+  min-height: 30px;
+}
+
+#effects-rack .nav-link {
+  color: #999;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+#effects-rack .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #444;
+}
+
+#effects-rack .nav-link.active {
+  color: #fff;
+  background-color: var(--daw-control-bg, #2a2a2a);
+  border-color: #444 #444 var(--daw-control-bg, #2a2a2a);
+  border-bottom-color: transparent;
+}
+
+/* Adjust the tab content area */
+#effects-rack .tab-content {
+  background-color: var(--daw-control-bg, #2a2a2a);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Remove card styling from individual effects when in rack */
+#effects-rack .card {
+  border: none;
+  background: transparent;
+}
+
+#effects-rack .card-header {
+  display: none;
+}
+
+#effects-rack .card-body {
+  padding: 0.5rem;
+}
+
+/* Custom scrollbar for effects rack if needed */
+#effects-rack .tab-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+#effects-rack .tab-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#effects-rack .tab-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+#effects-rack .tab-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Compact knob layout */
+#effects-rack .container-fluid {
+  max-width: 100%;
+  padding: 0.5rem;
+}
+
+#effects-rack .row {
+  margin: 0;
+}
+
+/* Compact EQ sliders */
+.eq-slider {
+  height: 20px;
+  cursor: pointer;
+}
+
+.eq-slider::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+}
+
+.eq-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+}
+
+/* Smaller text in effects rack */
+#effects-rack small {
+  font-size: 0.7rem;
+}
+
+/* Compact buttons */
+#effects-rack .btn-sm {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,80 @@
+/* MultitrackWaveform.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--daw-bg, #1a1a1a);
+}
+
+.timelineWrapper {
+  height: 40px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.timelineWrapper::-webkit-scrollbar {
+  height: 0;
+}
+
+.waveformsScroller {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+  background-color: #1a1a1a;
+}
+
+.waveformsScroller::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.waveformsScroller::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.waveformsScroller::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 6px;
+}
+
+.waveformsScroller::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+.waveformsContainer {
+  min-height: 100%;
+  position: relative;
+}
+
+.waveformContainer {
+  border-bottom: 1px solid #2a2a2a;
+  position: relative;
+}
+
+.waveformCanvas {
+  display: block;
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.875rem;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 0.875rem;
+  font-style: italic;
+  background-color: rgba(255, 255, 255, 0.01);
+  border: 1px dashed #333;
+}

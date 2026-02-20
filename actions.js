@@ -533,10 +533,18 @@ export function postRecording({
     } = getState();
 
     dispatch(beginUpload(submissionId));
-    // let body = ''
+
+    // Try to get activity log from window global if composition not provided
+    let activityLogContent = composition;
+    if (!activityLogContent && typeof window !== 'undefined' && window.__PENDING_ACTIVITY_LOG__) {
+      activityLogContent = window.__PENDING_ACTIVITY_LOG__;
+      console.log('📊 Using activity log from window global for submission content');
+    }
+
     let bodyObj = { content: 'N/A for Perform submissions' };
-    if (composition) {
-      bodyObj = { content: composition };
+    if (activityLogContent) {
+      bodyObj = { content: activityLogContent };
+      console.log('📊 Setting submission content with activity log');
     }
 
     bodyObj.index = index;
@@ -555,14 +563,47 @@ export function postRecording({
       .then(assertResponse)
       .then((res) => res.json())
       .then((submission) => {
+        // Create FormData for the file upload
+        // Django/DRF typically expects 'file' as the field name
+        const formData = new FormData();
+
+        // Determine filename extension from MIME type
+        let extension = 'webm';
+        if (audio.type) {
+          if (audio.type.includes('webm')) extension = 'webm';
+          else if (audio.type.includes('ogg')) extension = 'ogg';
+          else if (audio.type.includes('wav')) extension = 'wav';
+          else if (audio.type.includes('mp4')) extension = 'mp4';
+          else if (audio.type.includes('mpeg') || audio.type.includes('mp3')) extension = 'mp3';
+        }
+
+        // Append the audio file with 'file' as the field name (standard Django field name)
+        formData.append('file', audio, `recording.${extension}`);
+
+        console.log('📊 Uploading audio:', {
+          fieldName: 'file',
+          filename: `recording.${extension}`,
+          type: audio.type,
+          size: audio.size
+        });
+
+        // Note: Activity log is now sent in the submission content field above,
+        // not as a separate attachment field. Clear the window global.
+        if (typeof window !== 'undefined' && window.__PENDING_ACTIVITY_LOG__) {
+          console.log('📊 Activity log was already included in submission content');
+          window.__PENDING_ACTIVITY_LOG__ = null;
+          window.__PENDING_ACTIVITY_LOG_TIMESTAMP__ = null;
+        }
+
         fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/courses/${slug}/assignments/${assignmentId}/submissions/${submission.id}/attachments/`,
           {
             headers: {
               Authorization: `Token ${token}`,
+              // Don't set Content-Type - let browser set it with multipart boundary
             },
             method: 'POST',
-            body: audio,
+            body: formData,
           },
         )
           .then(assertResponse)

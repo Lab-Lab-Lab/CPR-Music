@@ -1,0 +1,379 @@
+/* ===================
+   MIDI TRACK STYLES
+   =================== */
+
+/* MIDI Track Container */
+.track.midi-track {
+  background-color: #1a1a2a;
+  border-left: 2px solid #4a4aaa;
+}
+
+.track.midi-track .track-controls {
+  background-color: #1e1e2e;
+  border-color: #4a4aaa;
+}
+
+.track.midi-track .track-waveform {
+  background-color: #1a1a2a;
+  /* Grid removed - causes stretching during recording. Grid is drawn on canvas instead. */
+}
+
+.track.midi-track:hover .track-waveform {
+  background-color: #1e1e2e;
+}
+
+.track.midi-track.track-selected .track-waveform {
+  background-color: #22223a;
+}
+
+.track.midi-track .track-waveform canvas {
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.track.midi-track canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+}
+
+/* MIDI Track Header */
+.track.midi-track .track-header {
+  border-bottom: 1px solid #4a4aaa;
+}
+
+/* Instrument Display */
+.track.midi-track .instrument-display {
+  background-color: rgba(100, 149, 237, 0.1);
+  border: 1px solid #4a4aaa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  color: #6495ed;
+}
+
+.track.midi-track .instrument-display:hover {
+  background-color: rgba(100, 149, 237, 0.2);
+  color: #87ceeb;
+  cursor: pointer;
+}
+
+/* MIDI Track Buttons */
+.track.midi-track .btn-group {
+  width: 100%;
+}
+
+.track.midi-track .track-buttons {
+  flex-wrap: wrap;
+}
+
+.track.midi-track .track-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.track.midi-track .track-control:last-child {
+  margin-left: 4px;
+}
+
+.track.midi-track .btn-group.w-100 {
+  flex-wrap: wrap;
+}
+
+.track.midi-track .btn-group .btn {
+  flex: 1 0 auto;
+  font-size: 0.7rem;
+  padding: 2px 4px;
+}
+
+.track.midi-track .btn-outline-primary {
+  border-color: #4a4aaa;
+  color: #6495ed;
+}
+
+/* MIDI Indicator */
+.track.midi-track .midi-indicator,
+.midi-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #6495ed;
+  border-radius: 50%;
+  margin-right: 4px;
+  animation: midi-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes midi-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* MIDI Notes */
+.midi-note {
+  position: absolute;
+  background-color: #6495ed;
+  border: 1px solid #4169e1;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.midi-note:hover {
+  background-color: #87ceeb;
+  box-shadow: 0 0 4px rgba(100, 149, 237, 0.5);
+}
+
+.midi-note.selected {
+  background-color: #ff6347;
+  border-color: #ff4500;
+  box-shadow: 0 0 6px rgba(255, 99, 71, 0.7);
+}
+
+/* MIDI Grid Lines */
+.midi-grid-line {
+  position: absolute;
+  background-color: rgba(100, 149, 237, 0.1);
+  pointer-events: none;
+}
+
+.midi-grid-line.beat {
+  background-color: rgba(100, 149, 237, 0.15);
+}
+
+.midi-grid-line.bar {
+  background-color: rgba(100, 149, 237, 0.25);
+  width: 2px !important;
+}
+
+/* Empty MIDI State */
+.track.midi-track .empty-midi-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Empty MIDI track waveform with piano roll grid */
+.track.midi-track .track-waveform.empty-midi::after {
+  content: 'Click Notes or Patterns to add MIDI';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #4a6ed4;
+  font-size: 0.8rem;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+  background: rgba(26, 26, 42, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid rgba(100, 149, 237, 0.3);
+}
+
+/* MIDI Playhead */
+.midi-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #ff6347;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* MIDI Tempo Display */
+.midi-tempo-display {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #6495ed;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-family: monospace;
+}
+
+/* MIDI Control Buttons */
+.midi-control-btn {
+  background-color: #2a2a4a;
+  border: 1px solid #4a4aaa;
+  color: #6495ed;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.75rem;
+}
+
+.midi-control-btn:hover {
+  background-color: #3a3a5a;
+  color: #87ceeb;
+  box-shadow: 0 1px 3px rgba(100, 149, 237, 0.3);
+}
+
+/* Instrument-specific styling */
+.track.midi-track.instrument-synth .track-controls {
+  border-left-color: #ff69b4;
+}
+
+.track.midi-track.instrument-drums .track-controls {
+  border-left-color: #ffa500;
+}
+
+.track.midi-track.instrument-piano .track-controls {
+  border-left-color: #98fb98;
+}
+
+/* Audio Routing Indicator */
+.audio-routing-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #90ee90;
+  border-radius: 50%;
+  margin: 0 2px;
+}
+
+/* MIDI Note Colors by Instrument */
+.midi-note-synth,
+.midi-note-color-synth {
+  background-color: #ff69b4;
+  border-color: #ff1493;
+}
+
+.midi-note-drums,
+.midi-note-color-drums {
+  background-color: #ffa500;
+  border-color: #ff8c00;
+}
+
+.midi-note-piano,
+.midi-note-color-piano {
+  background-color: #98fb98;
+  border-color: #90ee90;
+}
+
+.midi-note-color-default {
+  background-color: #6495ed;
+  border-color: #4169e1;
+}
+
+/* MIDI Track Display */
+.midi-track-display {
+  position: relative;
+  background-color: #1a1a2a;
+  height: 100%;
+  overflow: hidden;
+}
+
+.midi-track-display.pattern-mode {
+  background-image: 
+    linear-gradient(90deg, rgba(100, 149, 237, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(100, 149, 237, 0.05) 1px, transparent 1px);
+  background-size: 16px 12px;
+}
+
+.track.midi-track .midi-track-display::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(100, 149, 237, 0) 0%,
+    rgba(100, 149, 237, 0.05) 50%,
+    rgba(100, 149, 237, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.track.midi-track .midi-track-display:hover::after {
+  background: linear-gradient(
+    to right,
+    rgba(100, 149, 237, 0) 0%,
+    rgba(100, 149, 237, 0.1) 50%,
+    rgba(100, 149, 237, 0) 100%
+  );
+}
+
+/* Control Tabs */
+.track.midi-track .control-tabs {
+  margin-bottom: 4px;
+}
+
+.track.midi-track .control-tabs .btn {
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  border-radius: 2px;
+  margin-right: 2px;
+}
+
+/* MIDI Track Layout Adjustments */
+.track.midi-track {
+  min-height: 240px !important;
+  height: 240px !important;
+  max-height: 240px !important;
+  position: relative;
+}
+
+.track.midi-track .track-controls {
+  width: 230px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  height: 240px !important;
+  min-height: 240px !important;
+  max-height: 240px !important;
+  padding: 0.5rem 0.5rem;
+  gap: 4px;
+  overflow-y: auto; /* Allow scrolling if needed */
+  overflow-x: hidden;
+}
+
+.track.midi-track .track-waveform {
+  height: 240px !important;
+  max-height: 240px !important;
+  min-height: 240px !important;
+}
+
+.track.midi-track .track-waveform canvas {
+  height: 100% !important;
+  max-height: 240px !important;
+}
+
+.track.midi-track .midi-track-display {
+  height: 100%;
+  min-height: 240px;
+  max-height: 240px;
+}
+
+/* Transport and Piano Integration */
+.multitrack-editor-container.piano-visible {
+  padding-bottom: 200px;
+}
+
+.multitrack-editor-container {
+  position: relative;
+}
+
+.multitrack-transport .btn-primary {
+  background-color: #4a7c9e;
+  border-color: #5a8cae;
+}

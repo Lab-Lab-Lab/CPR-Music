@@ -173,3 +173,2748 @@ nav.navbar.navbar-dark .navbar-nav .nav-link {
   width: 100%;
 }
 
+
+/* Multitrack Editor Styles - Sanitized */
+
+/* Main container */
+.multitrack-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 710px; /* Fixed height as requested */
+  background-color: #1a1a1a;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top Toolbar */
+.multitrack-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #2d2c29;
+  border-bottom: 1px solid #444;
+  flex-shrink: 0;
+}
+
+/* Toolbar sections */
+.toolbar-section {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.toolbar-section.ms-auto {
+  margin-left: auto;
+}
+
+.zoom-slider {
+  width: 100px;
+  vertical-align: middle;
+}
+
+/* Toolbar button styles */
+.multitrack-toolbar .btn {
+  background-color: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+  color: #d0d0d0 !important;
+  font-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+.multitrack-toolbar .btn:hover:not(:disabled) {
+  background-color: #4a4a4a !important;
+  border-color: #5a5a5a !important;
+  color: #fff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.multitrack-toolbar .btn:active:not(:disabled) {
+  background-color: #333 !important;
+}
+
+/* Active/toggled state for effects button */
+.multitrack-toolbar .btn-warning {
+  background-color: #b8860b !important;
+  border-color: #daa520 !important;
+  color: #fff !important;
+}
+
+.multitrack-toolbar .btn-warning:hover:not(:disabled) {
+  background-color: #daa520 !important;
+  border-color: #ffd700 !important;
+}
+
+/* Primary action buttons */
+.multitrack-toolbar .btn-primary,
+.multitrack-toolbar .btn-outline-primary {
+  background-color: #4a7c9e !important;
+  border-color: #5a8cae !important;
+  color: #fff !important;
+}
+
+.multitrack-toolbar .btn-outline-primary {
+  background-color: transparent !important;
+  color: #5a8cae !important;
+}
+
+.multitrack-toolbar .btn-outline-primary:hover:not(:disabled) {
+  background-color: #4a7c9e !important;
+  color: #fff !important;
+}
+
+/* Mixdown button special styling */
+.multitrack-toolbar .mixdown-btn {
+  background: linear-gradient(135deg, #4a7c9e 0%, #5a8cae 100%) !important;
+  border-color: #5a8cae !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.multitrack-toolbar .mixdown-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a8cae 0%, #6a9cbe 100%) !important;
+  border-color: #6a9cbe !important;
+  box-shadow: 0 2px 4px rgba(74, 124, 158, 0.3);
+}
+
+/* Main Content Area */
+.multitrack-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  min-height: 0;
+  position: relative;
+  margin-bottom: 0 !important;
+  padding-bottom: 60px; /* Space for transport controls */
+}
+
+/* Timeline Container */
+.timeline-container {
+  display: flex;
+  height: 40px;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
+  flex-shrink: 0;
+}
+
+/* Timeline spacers */
+.timeline-sidebar-spacer {
+  width: 80px;
+  min-width: 80px;
+  background-color: #1e1e1e;
+  border-right: 1px solid #3a3a3a;
+}
+
+.timeline-controls-spacer {
+  width: 200px;
+  min-width: 200px;
+  background-color: #232323;
+  border-right: 1px solid #444;
+}
+
+.multitrack-timeline {
+  flex: 1;
+  height: 40px;
+  position: relative;
+  background-color: #1e1e1e;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+}
+
+.timeline-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Tracks Layout Container */
+.tracks-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background-color: #242424; /* Match track background */
+  min-height: 0;
+  position: relative;
+}
+
+/* Sidebar background pseudo-element */
+.tracks-layout::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background-color: #1e1e1e;
+  border-right: 1px solid #3a3a3a;
+  z-index: 0;
+}
+
+/* Tracks Sidebar (Add Track Buttons) */
+.tracks-sidebar {
+  width: 80px;
+  min-width: 80px;
+  background-color: transparent;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Add track buttons container */
+.add-track-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+  padding-top: 8px;
+}
+
+/* Circular SVG button styles */
+.add-track-sidebar-btn {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-width: 2px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Record button (red/danger) */
+.add-track-sidebar-btn.btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+
+.add-track-sidebar-btn.btn-danger:hover {
+  background-color: #c82333 !important;
+  border-color: #bd2130 !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(220, 53, 69, 0.5) !important;
+}
+
+/* Add track button (dashed border) */
+.add-track-sidebar-btn.btn-outline-secondary {
+  background-color: transparent !important;
+  border: 2px dashed #6c757d !important;
+  color: #6c757d !important;
+}
+
+.add-track-sidebar-btn.btn-outline-secondary:hover {
+  background-color: rgba(108, 117, 125, 0.1) !important;
+  border-color: #adb5bd !important;
+  color: #adb5bd !important;
+  transform: scale(1.05);
+}
+
+/* Tracks Area */
+.tracks-area {
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  background-color: #242424; /* Match track background */
+  padding: 0;
+  margin: 0;
+  padding-bottom: 60px; /* space for fixed transport at bottom */
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #555 #1a1a1a; /* Firefox */
+}
+
+/* Tracks container */
+.tracks-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #242424;
+}
+
+/* Individual Track Container */
+.track {
+  display: flex;
+  height: 120px !important;
+  max-height: 120px !important;
+  min-height: 120px !important;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: #242424;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.track:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.track-selected {
+  background-color: rgba(146, 206, 132, 0.05) !important;
+  box-shadow: inset 0 0 0 2px rgba(146, 206, 132, 0.3) !important;
+}
+
+.track:focus {
+  outline: none !important;
+}
+
+/* Track Controls */
+.track-controls {
+  width: 200px;
+  min-width: 200px;
+  padding: 0.5rem 0.5rem;
+  background-color: #232323;
+  border-right: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+/* Track Header */
+.track-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+
+/* Track name input */
+.track-name-input {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  height: 28px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.track-name-input:focus {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: #92ce84 !important;
+  box-shadow: 0 0 0 2px rgba(146, 206, 132, 0.1) !important;
+  outline: none;
+}
+
+/* Track dropdown menu button */
+.track-menu-btn {
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: #999;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+}
+
+.track-menu-btn:hover {
+  color: #fff !important;
+}
+
+/* Track Buttons */
+.track-buttons {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+}
+
+.track-btn {
+  flex: 1;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  height: 26px;
+  border-radius: 2px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+/* Track Sliders */
+.track-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+}
+
+.slider-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  width: 100%;
+  font-size: 0.65rem;
+  color: #999;
+  line-height: 1;
+}
+
+.slider-group label svg {
+  width: 12px;
+  height: 12px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.slider-group span {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  color: #888;
+  font-family: monospace;
+  min-width: 25px;
+}
+
+/* Custom Range Sliders */
+.track-pan-slider,
+.track-volume-slider {
+  flex: 1;
+  height: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+}
+
+.track-pan-slider:focus,
+.track-volume-slider:focus {
+  outline: none;
+}
+
+/* Webkit browsers */
+.track-pan-slider::-webkit-slider-track,
+.track-volume-slider::-webkit-slider-track {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border: 1px solid #333;
+  border-radius: 1.5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.track-pan-slider::-webkit-slider-thumb,
+.track-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, #b8d4a9 0%, #92ce84 50%, #76b165 100%);
+  border: 1px solid #5a8a4f;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+}
+
+.track-pan-slider::-webkit-slider-thumb:hover,
+.track-volume-slider::-webkit-slider-thumb:hover {
+  background: linear-gradient(135deg, #c5dfb9 0%, #a2de94 50%, #86c175 100%);
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Firefox */
+.track-pan-slider::-moz-range-track,
+.track-volume-slider::-moz-range-track {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border: 1px solid #333;
+  border-radius: 1.5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.track-pan-slider::-moz-range-thumb,
+.track-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, #b8d4a9 0%, #92ce84 50%, #76b165 100%);
+  border: 1px solid #5a8a4f;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+}
+
+/* Disabled state for sliders */
+.track-pan-slider:disabled,
+.track-volume-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.track-pan-slider:disabled::-webkit-slider-thumb,
+.track-volume-slider:disabled::-webkit-slider-thumb {
+  background: #666;
+  border-color: #444;
+  cursor: not-allowed;
+}
+
+/* Track Waveform Container */
+.track-waveform {
+  flex: 1;
+  background-color: #2a2a2a;
+  overflow: hidden;
+  position: relative;
+  height: 120px !important;
+  max-height: 120px !important;
+  min-height: 120px !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Force wavesurfer to fill container properly */
+.track-waveform > div {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* Wavesurfer wave element */
+.track-waveform wave {
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Wavesurfer canvas */
+.track-waveform canvas {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  max-height: 120px !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Walking waveform canvas specific */
+.track-waveform canvas[width='3000'] {
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  transform: translateY(-50%) !important;
+  height: auto !important;
+  max-height: 100px !important;
+  min-width: 100%;
+}
+
+/* Recording track specific styles */
+.track.recording-track .track-controls {
+  background-color: #2a1a1a;
+}
+
+.track.recording-track .track-waveform {
+  background-color: #1f1a1a;
+}
+
+.track-waveform.recording-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Recording Stop button */
+.track-controls .btn-warning {
+  background-color: #ff9800;
+  border-color: #ff9800;
+  color: #000;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 100%;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  margin: 0;
+  background-color: #242424;
+}
+
+/* Transport Container */
+.multitrack-transport-container {
+  position: relative;
+  border-top: 1px solid #444;
+  background-color: #2d2c29;
+  padding: 0.75rem;
+  z-index: 100;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+/* Extend sidebar visual into transport area */
+.multitrack-transport-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background-color: #1e1e1e;
+  border-right: 1px solid #3a3a3a;
+  z-index: 0;
+}
+
+/* Transport controls */
+.multitrack-transport {
+  position: relative;
+  z-index: 1;
+  margin-left: 72px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Transport buttons */
+.multitrack-transport .btn {
+  background-color: #4a4a4a !important;
+  border-color: #5a5a5a !important;
+  color: #e0e0e0 !important;
+  transition: all 0.2s ease;
+}
+
+.multitrack-transport .btn:hover:not(:disabled) {
+  background-color: #6a6a6a !important;
+  border-color: #7a7a7a !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.multitrack-transport .btn:active:not(:disabled) {
+  background-color: #5a5a5a !important;
+  transform: translateY(0);
+}
+
+.multitrack-transport .btn:disabled {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #666 !important;
+  opacity: 0.6;
+}
+
+/* Circular play/pause and stop buttons */
+.multitrack-transport .btn-group > .btn:first-child,
+.multitrack-transport .btn-group > .btn:nth-child(2) {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 8px !important;
+}
+
+/* Transport button variants */
+.multitrack-transport .btn-primary {
+  background-color: #4a7c9e !important;
+  border-color: #5a8cae !important;
+}
+
+.multitrack-transport .btn-primary:hover:not(:disabled) {
+  background-color: #5a8cae !important;
+  border-color: #6a9cbe !important;
+}
+
+.multitrack-transport .btn-warning {
+  background-color: #d4a030 !important;
+  border-color: #e4b040 !important;
+  color: #fff !important;
+}
+
+.multitrack-transport .btn-warning:hover:not(:disabled) {
+  background-color: #e4b040 !important;
+  border-color: #f4c050 !important;
+}
+
+.multitrack-transport .btn-secondary {
+  background-color: #555 !important;
+  border-color: #666 !important;
+}
+
+.multitrack-transport .btn-secondary:hover:not(:disabled) {
+  background-color: #666 !important;
+  border-color: #777 !important;
+}
+
+.multitrack-transport .btn-outline-secondary {
+  background-color: transparent !important;
+  border-color: #666 !important;
+  color: #999 !important;
+}
+
+.multitrack-transport .btn-outline-secondary:hover:not(:disabled) {
+  background-color: #444 !important;
+  border-color: #777 !important;
+  color: #fff !important;
+}
+
+.multitrack-transport .btn-danger {
+  background-color: #a04040 !important;
+  border-color: #b05050 !important;
+}
+
+/* Transport UI elements */
+.multitrack-transport .btn-group {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 0 !important;
+}
+
+.multitrack-transport .progress {
+  background-color: #333;
+  border: 1px solid #444;
+}
+
+.multitrack-transport .progress-bar {
+  background-color: #4a7c9e;
+}
+
+.multitrack-transport .time-display {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #aaa;
+  min-width: 45px;
+}
+
+.multitrack-transport .form-range {
+  accent-color: #4a7c9e;
+}
+
+.multitrack-transport .track-info {
+  font-size: 0.85rem;
+  color: #888 !important;
+}
+
+/* Effects Panel */
+.effects-panel {
+  background-color: #232323 !important;
+  border-left: 1px solid #444 !important;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Bootstrap structure fixes */
+.multitrack-editor-container .row {
+  margin: 0 !important;
+}
+
+.multitrack-editor-container [class*='col-'] {
+  padding: 0 !important;
+}
+
+.multitrack-main-content .row {
+  flex: 1;
+  margin: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.multitrack-main-content .col,
+.multitrack-main-content [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+/* Scrollbar Styling */
+.tracks-area::-webkit-scrollbar {
+  width: 12px;
+  background-color: #1a1a1a;
+}
+
+.tracks-area::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-left: 1px solid #333;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.tracks-area::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+  border: 1px solid #444;
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.tracks-area::-webkit-scrollbar-thumb:hover {
+  background: #666;
+  border-color: #555;
+}
+
+.tracks-area::-webkit-scrollbar-thumb:active {
+  background: #777;
+}
+
+/* Playhead styling */
+#multitrack-playhead {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100vh;
+  background-color: #ff3030;
+  box-shadow: 0 0 3px rgba(255, 48, 48, 0.8);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Gap removal helpers */
+.tracks-area > * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.tracks-container,
+.tracks-area > div {
+  gap: 0 !important;
+  row-gap: 0 !important;
+  column-gap: 0 !important;
+}
+
+/* Optional gradient for empty tracks area */
+.tracks-area:has(.track:last-child:nth-child(-n + 3)) {
+  background: linear-gradient(
+    to bottom,
+    #242424 0%,
+    #242424 calc(100% - 40px),
+    #1a1a1a 100%
+  );
+}
+
+/* MIDI Track Specific Styles */
+
+/* MIDI track has a different background */
+.track.midi-track .track-controls {
+  background-color: #1a2a1a; /* Greenish tint */
+}
+
+.track.midi-track .track-waveform {
+  background-color: #1f2a1f; /* Darker green */
+  position: relative;
+}
+
+/* MIDI canvas styling */
+.track.midi-track canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Add MIDI track button styling */
+.add-track-sidebar-btn.btn-success {
+  background-color: #4a7c4a !important;
+  border-color: #4a7c4a !important;
+}
+
+.add-track-sidebar-btn.btn-success:hover {
+  background-color: #5a8c5a !important;
+  border-color: #5a8c5a !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(74, 124, 74, 0.5) !important;
+}
+
+/* MIDI indicator badge */
+.midi-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #92ce84;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* MIDI note visualization */
+.midi-note {
+  fill: #92ce84;
+  stroke: #76b165;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: fill 0.1s ease;
+}
+
+.midi-note:hover {
+  fill: #a2de94;
+}
+
+.midi-note.selected {
+  fill: #b2ee94;
+  stroke: #96d185;
+  stroke-width: 2;
+}
+
+/* Piano roll preview grid */
+.midi-grid-line {
+  stroke: #333;
+  stroke-width: 0.5;
+  opacity: 0.5;
+}
+
+.midi-grid-line.beat {
+  stroke: #444;
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.midi-grid-line.bar {
+  stroke: #555;
+  stroke-width: 1;
+  opacity: 1;
+}
+
+/* Empty state for MIDI tracks */
+.track.midi-track .empty-midi-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* MIDI playhead in track */
+.midi-playhead {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background-color: #ff3030;
+  box-shadow: 0 0 3px rgba(255, 48, 48, 0.8);
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* MIDI track hover effect */
+.track.midi-track:hover .track-waveform {
+  background-color: #222d22;
+}
+
+/* Selected MIDI track */
+.track.midi-track.track-selected .track-waveform {
+  box-shadow: inset 0 0 0 2px rgba(146, 206, 132, 0.3);
+}
+
+/* Tempo/BPM display for MIDI tracks */
+.midi-tempo-display {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #888;
+  font-family: monospace;
+}
+
+/* Future: Piano roll modal/panel styles */
+.piano-roll-container {
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.piano-roll-header {
+  background-color: #2d2c29;
+  padding: 0.5rem;
+  border-bottom: 1px solid #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.piano-roll-canvas {
+  background-color: #2a2a2a;
+  cursor: crosshair;
+}
+
+/* MIDI control buttons */
+.midi-control-btn {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  height: 24px;
+  border-radius: 3px;
+  background-color: #3a4a3a !important;
+  border-color: #4a5a4a !important;
+  color: #a0d0a0 !important;
+}
+
+.midi-control-btn:hover {
+  background-color: #4a5a4a !important;
+  border-color: #5a6a5a !important;
+}
+
+/* Instrument Display in Track */
+.instrument-display {
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.instrument-display:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Instrument Selector Modal */
+.instrument-card {
+  border-width: 2px;
+  border-style: solid;
+  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.instrument-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.instrument-card.selected {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Instrument-specific track colors */
+.track.midi-track.instrument-synth .track-controls {
+  background-color: #1a2228; /* Blueish */
+}
+
+.track.midi-track.instrument-drums .track-controls {
+  background-color: #281a1a; /* Reddish */
+}
+
+.track.midi-track.instrument-piano .track-controls {
+  background-color: #22221a; /* Yellowish */
+}
+
+/* Audio routing visualization */
+.audio-routing-indicator {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  display: flex;
+  gap: 2px;
+}
+
+.routing-node {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #444;
+  border: 1px solid #666;
+  transition: all 0.2s ease;
+}
+
+.routing-node.active {
+  background-color: #92ce84;
+  box-shadow: 0 0 4px rgba(146, 206, 132, 0.8);
+}
+
+/* Instrument preset buttons */
+.preset-button {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+  color: #aaa !important;
+  transition: all 0.15s ease;
+}
+
+.preset-button:hover {
+  background-color: #4a4a4a !important;
+  border-color: #5a5a5a !important;
+  color: #fff !important;
+}
+
+.preset-button.active {
+  background-color: #5a7a5a !important;
+  border-color: #6a8a6a !important;
+  color: #fff !important;
+}
+
+/* Drum pad visualization for drum tracks */
+.drum-pad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+.drum-pad {
+  aspect-ratio: 1;
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.drum-pad:hover {
+  background-color: #4a4a4a;
+  color: #888;
+}
+
+.drum-pad.active {
+  background-color: #ce6a6a;
+  border-color: #de7a7a;
+  color: #fff;
+  transform: scale(0.95);
+}
+
+/* MIDI note colors by instrument type */
+.midi-note-synth {
+  fill: #4a7c9e;
+  stroke: #3a6c8e;
+}
+
+.midi-note-drums {
+  fill: #ce6a6a;
+  stroke: #be5a5a;
+}
+
+.midi-note-piano {
+  fill: #9e9e4a;
+  stroke: #8e8e3a;
+}
+
+/* Instrument loading indicator */
+.instrument-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.instrument-loading::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid #444;
+  border-top-color: #92ce84;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Volume meter visualization */
+.volume-meter {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 80%;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.volume-meter-fill {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(
+    to top,
+    #4a7c4a 0%,
+    #7cac4a 60%,
+    #ceca4a 85%,
+    #ce4a4a 100%
+  );
+  transition: height 0.05s ease-out;
+}
+
+/* Enhanced MIDI track styling */
+.track.midi-track .track-waveform {
+  position: relative;
+  background: linear-gradient(135deg, #1f2a1f 0%, #2a2a2a 100%);
+}
+
+.track.midi-track:hover .track-waveform {
+  background: linear-gradient(135deg, #222d22 0%, #2d2d2d 100%);
+}
+
+/* Instrument type badges */
+.instrument-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.instrument-badge.synth {
+  background-color: #4a7c9e;
+  color: #fff;
+}
+
+.instrument-badge.drums {
+  background-color: #ce6a6a;
+  color: #fff;
+}
+
+.instrument-badge.piano {
+  background-color: #9e9e4a;
+  color: #fff;
+}
+
+/* Piano Roll Editor Styles */
+.piano-roll-modal .modal-dialog {
+  max-width: 90vw;
+  height: 80vh;
+}
+
+.piano-roll-modal .modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+  height: 100%;
+}
+
+.piano-roll-header {
+  background-color: #2d2c29;
+  border-bottom: 1px solid #444;
+  padding: 0.75rem 1rem;
+}
+
+.piano-roll-body {
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px);
+}
+
+.piano-roll-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.piano-roll-keyboard-container {
+  width: 120px;
+  min-width: 120px;
+  background-color: #232323;
+  border-right: 1px solid #444;
+  overflow: hidden;
+}
+
+.piano-roll-canvas-container {
+  flex: 1;
+  overflow: auto;
+  background-color: #2a2a2a;
+  position: relative;
+}
+
+/* Custom scrollbar for piano roll */
+.piano-roll-canvas-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-corner {
+  background: #1a1a1a;
+}
+
+/* Velocity lane */
+.velocity-lane {
+  height: 100px;
+  background-color: #232323;
+  border-top: 1px solid #444;
+  padding: 0.5rem;
+}
+
+/* Tool buttons */
+.piano-roll-header .btn-group .btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+}
+
+.piano-roll-header .btn-group .btn:first-child {
+  border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.piano-roll-header .btn-group .btn:last-child {
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* Piano keyboard styles */
+.piano-key {
+  position: relative;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.piano-key.white {
+  background-color: #f5f5f5;
+  height: 20px;
+}
+
+.piano-key.black {
+  background-color: #2a2a2a;
+  height: 20px;
+  z-index: 1;
+}
+
+.piano-key:hover {
+  background-color: #92ce84 !important;
+}
+
+.piano-key.active {
+  background-color: #b2ee94 !important;
+}
+
+.piano-key-label {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #666;
+  pointer-events: none;
+}
+
+/* Note colors by instrument type (matching track colors) */
+.midi-note-color-synth {
+  --note-color: #4a7c9e;
+}
+
+.midi-note-color-drums {
+  --note-color: #ce6a6a;
+}
+
+.midi-note-color-piano {
+  --note-color: #9e9e4a;
+}
+
+.midi-note-color-default {
+  --note-color: #92ce84;
+}
+
+/* Piano Roll Editor Styles - UPDATED FOR PROPER SIZING */
+.piano-roll-modal .modal-dialog {
+  max-width: 85vw; /* Reduced from 90vw */
+  width: 85vw;
+  height: 70vh; /* Reduced from 80vh */
+  margin: 1.75rem auto;
+}
+
+.piano-roll-modal .modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+  height: 70vh; /* Match dialog height */
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.piano-roll-header {
+  background-color: #2d2c29;
+  border-bottom: 1px solid #444;
+  padding: 0.5rem 1rem; /* Reduced padding */
+  flex-shrink: 0;
+}
+
+.piano-roll-body {
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.piano-roll-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+.piano-roll-keyboard-container {
+  width: 100px; /* Reduced from 120px */
+  min-width: 100px;
+  background-color: #232323;
+  border-right: 1px solid #444;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.piano-roll-canvas-container {
+  flex: 1;
+  overflow: auto;
+  background-color: #2a2a2a;
+  position: relative;
+}
+
+/* Make the canvas container scrollable */
+.piano-roll-canvas-container > div {
+  min-width: 100%;
+  min-height: 100%;
+}
+
+/* Adjust modal header elements for smaller size */
+.piano-roll-header h5 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.piano-roll-header .btn-sm {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+}
+
+.piano-roll-header .form-range {
+  width: 80px !important; /* Reduced from 100px */
+}
+
+/* Custom scrollbar for piano roll */
+.piano-roll-canvas-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.piano-roll-canvas-container::-webkit-scrollbar-corner {
+  background: #1a1a1a;
+}
+
+/* Velocity lane - make it smaller */
+.velocity-lane {
+  height: 60px; /* Reduced from 100px */
+  background-color: #232323;
+  border-top: 1px solid #444;
+  padding: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .piano-roll-modal .modal-dialog {
+    max-width: 95vw;
+    width: 95vw;
+  }
+}
+
+/* Fix the canvas positioning */
+.piano-roll-canvas-container canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+/* Pattern Library Modal Styles */
+.pattern-library-modal .modal-dialog {
+  max-width: 600px;
+}
+
+.pattern-library-modal .modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.pattern-library-modal .modal-header {
+  background-color: #2d2c29;
+  border-bottom: 1px solid #444;
+}
+
+.pattern-library-modal .modal-body {
+  background-color: #1a1a1a;
+}
+
+.pattern-library-modal .modal-footer {
+  background-color: #2d2c29;
+  border-top: 1px solid #444;
+}
+
+/* Pattern list styles */
+.pattern-list .list-group-item {
+  background-color: #252525;
+  border: 1px solid #333;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.pattern-list .list-group-item:hover {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+.pattern-list .list-group-item.active {
+  background-color: #2d2c29;
+  border-color: #4a7c9e;
+}
+
+/* Pattern preview */
+.pattern-preview {
+  position: relative;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* Pattern color indicator */
+.pattern-color-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* Pattern view mode toggle */
+.pattern-mode-toggle {
+  margin-bottom: 0.5rem;
+}
+
+.pattern-mode-toggle .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Pattern clips on timeline */
+.pattern-clip {
+  position: absolute;
+  border: 2px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.pattern-clip:hover {
+  opacity: 0.8;
+}
+
+.pattern-clip-name {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Pattern drag ghost */
+.pattern-drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: 9999;
+  border: 2px solid;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+}
+
+/* Step sequencer styles (for future) */
+.step-sequencer {
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.step-sequencer-grid {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(16, 1fr);
+}
+
+.step-button {
+  aspect-ratio: 1;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.step-button:hover {
+  background-color: #3a3a3a;
+}
+
+.step-button.active {
+  background-color: #4a7c9e;
+  border-color: #5a8cae;
+}
+
+.step-button.accent {
+  background-color: #ce6a6a;
+  border-color: #de7a7a;
+}
+
+/* Step Sequencer Modal */
+.step-sequencer-modal .modal-dialog {
+  max-width: 1200px;
+}
+
+.step-sequencer-modal .modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.step-sequencer-modal .modal-header {
+  background-color: #2d2c29;
+  border-bottom: 1px solid #444;
+}
+
+.step-sequencer-modal .modal-body {
+  background-color: #1a1a1a;
+}
+
+.step-sequencer-modal .modal-footer {
+  background-color: #2d2c29;
+  border-top: 1px solid #444;
+}
+
+/* Step sequencer grid */
+.step-sequencer-grid {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.step-sequencer-grid table {
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+
+.step-button {
+  transition: all 0.1s ease;
+  outline: none;
+  border: none;
+}
+
+.step-button:hover {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.step-button.active {
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.step-button.playing {
+  animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Pattern drag and drop */
+.pattern-draggable {
+  overflow: visible; /* show full content; no internal scrollbars */
+  transition: transform 0.2s ease;
+}
+
+.pattern-draggable:active {
+  cursor: grabbing;
+}
+
+.pattern-draggable:hover {
+  transform: translateY(-2px);
+}
+
+/* Pattern drop zone indicator */
+.pattern-drop-zone {
+  position: relative;
+}
+
+.pattern-drop-zone.drag-over::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(74, 124, 158, 0.2);
+  border: 2px dashed #4a7c9e;
+  pointer-events: none;
+}
+
+/* Pattern clip styles */
+.pattern-clip {
+  user-select: none;
+}
+
+.pattern-clip-handle {
+  cursor: ew-resize;
+}
+
+.pattern-clip-body {
+  cursor: move;
+}
+
+/* Pattern library enhancements */
+.pattern-library-item {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.pattern-library-item.dragging {
+  opacity: 0.5;
+}
+
+.pattern-grip {
+  cursor: grab;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.pattern-library-item:hover .pattern-grip {
+  opacity: 1;
+}
+
+/* Pattern preview visualization */
+.pattern-preview-note {
+  position: absolute;
+  background-color: currentColor;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Copy/paste indicators */
+.pattern-copied {
+  position: relative;
+}
+
+.pattern-copied::after {
+  content: 'Copied!';
+  position: absolute;
+  top: -20px;
+  right: 0;
+  background-color: #4a7c9e;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  animation: fadeInOut 1s ease;
+  pointer-events: none;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+/* Enhanced MIDI track pattern view */
+.midi-track-display.pattern-mode {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 50px,
+    rgba(255, 255, 255, 0.03) 50px,
+    rgba(255, 255, 255, 0.03) 51px
+  );
+}
+
+/* Pattern edit mode */
+.pattern-edit-indicator {
+  position: absolute;
+
+/* Audio track height slightly taller than 120 to fit unified controls */
+.track.audio-track {
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+}
+
+.track.audio-track .track-controls,
+.track.audio-track .track-waveform {
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+}
+
+/* Allow audio waveform canvas to fill taller audio tracks */
+.track.audio-track .track-waveform canvas {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  display: block !important;
+}
+  top: 4px;
+  left: 4px;
+  background-color: #ff6a6a;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Improved pattern colors with better contrast */
+.pattern-color-1 {
+  background-color: #4a7c9e;
+}
+.pattern-color-2 {
+  background-color: #9e4a7c;
+}
+.pattern-color-3 {
+  background-color: #7c9e4a;
+}
+.pattern-color-4 {
+  background-color: #9e7c4a;
+}
+.pattern-color-5 {
+  background-color: #4a9e7c;
+}
+.pattern-color-6 {
+  background-color: #7c4a9e;
+}
+.pattern-color-7 {
+  background-color: #ce6a6a;
+}
+.pattern-color-8 {
+  background-color: #6ace6a;
+}
+
+/* Pattern context menu (future feature) */
+.pattern-context-menu {
+  position: fixed;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.pattern-context-menu li {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pattern-context-menu li:hover {
+  background-color: #3a3a3a;
+}
+
+.pattern-context-menu li.separator {
+  border-top: 1px solid #444;
+  padding: 0;
+  margin: 4px 0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .step-sequencer-modal .modal-dialog {
+    max-width: 95vw;
+  }
+
+  .step-sequencer-grid {
+    font-size: 0.75rem;
+  }
+
+  .step-button {
+    min-width: 20px;
+    min-height: 20px;
+  }
+}
+
+/* Walking waveform container fix */
+.track-waveform.recording-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Walking waveform canvas specific */
+.track-waveform canvas {
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  transform: translateY(-50%) !important;
+  display: block !important;
+}
+
+/* Remove conflicting rules for walking waveform */
+.track-waveform canvas[width='3000'] {
+  /* Let the inline styles handle positioning */
+  height: auto !important;
+  max-height: none !important;
+  min-width: 100%;
+}
+
+/* Recording track waveform container */
+.track.recording-track .track-waveform {
+  background-color: #1f1a1a;
+  height: 120px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the container maintains consistent height */
+.track-waveform {
+  height: 120px !important;
+  min-height: 120px !important;
+  max-height: 120px !important;
+}
+
+/* Remove the max-height constraint on walking waveform canvas */
+.track-waveform canvas[width='3000'] {
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  transform: translateY(-50%) !important;
+  height: auto !important;
+  max-height: none !important; /* Remove the 100px limit */
+  min-width: 100%;
+}
+
+/* Piano Keyboard Section - Sibelius-style layout */
+
+/* Remove the transport-container fixed positioning to allow stacking */
+.multitrack-transport-container {
+  position: relative !important; /* Changed from fixed */
+  bottom: auto !important;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #444;
+  background-color: #2d2c29;
+  padding: 0.75rem;
+  z-index: 100;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+/* New wrapper for transport + piano */
+.multitrack-bottom-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Piano keyboard section - above transport */
+.piano-keyboard-section {
+  background-color: #3a3f45 !important; /* Lighter blue-grey */
+  border-top: 1px solid #555;
+  border-bottom: 1px solid #444;
+  padding: 1rem 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  transition: all 0.3s ease;
+}
+
+/* Piano keyboard container centered */
+.piano-keyboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 900px; /* Limit piano width */
+  margin: 0 auto;
+}
+
+/* Piano info bar */
+.piano-keyboard-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 1rem;
+  color: #bbb;
+  font-size: 0.85rem;
+}
+
+.piano-keyboard-info strong {
+  color: #92ce84;
+}
+
+/* Piano keyboard canvas container */
+.piano-keyboard-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.piano-keyboard-container canvas {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  background-color: #1a1a1a;
+}
+
+/* Extend sidebar visual through piano section */
+.piano-keyboard-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background-color: #2a2f35;
+  border-right: 1px solid #4a4a4a;
+  z-index: 0;
+}
+
+/* Make sure piano content is above the sidebar extension */
+.piano-keyboard-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Adjust main content area to account for piano when visible */
+.multitrack-editor-container.piano-visible {
+  height: calc(
+    100vh - 200px
+  ) !important; /* Subtract piano + transport height */
+}
+
+/* Smooth transitions */
+.multitrack-editor-container {
+  transition: height 0.3s ease;
+}
+
+/* Piano toggle button active state */
+.multitrack-transport .btn-primary {
+  background-color: #4a7c9e !important;
+  border-color: #5a8cae !important;
+  box-shadow: 0 0 4px rgba(146, 206, 132, 0.5);
+}
+
+/* Optional: Add a subtle gradient to the piano section */
+.piano-keyboard-section {
+  background: linear-gradient(
+    to bottom,
+    #3f444a 0%,
+    #3a3f45 50%,
+    #353a40 100%
+  ) !important;
+}
+
+/* MIDI Track Height – authoritative */
+.track.midi-track {
+  height: 320px !important;
+  min-height: 320px !important;
+  max-height: 320px !important;
+  display: flex;
+  align-items: stretch;
+}
+
+.track.midi-track .track-controls,
+.track.midi-track .track-waveform,
+.track.midi-track .midi-track-display {
+  height: 320px !important;
+  min-height: 320px !important;
+  max-height: 320px !important;
+}
+
+.track.midi-track .track-waveform canvas {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  display: block !important;
+}
+
+/* Space out MIDI controls properly */
+.track.midi-track .track-header {
+  margin-bottom: 0.5rem;
+}
+
+.track.midi-track .instrument-display {
+  margin-bottom: 0.5rem;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
+.track.midi-track .btn-group {
+  margin-bottom: 0.5rem;
+}
+
+.track.midi-track .track-buttons {
+  margin-bottom: 0.5rem;
+}
+
+.track.midi-track .track-control {
+  margin-bottom: 0.5rem;
+}
+
+.track.midi-track .track-control:last-child {
+  margin-bottom: 0;
+}
+
+/* Track control labels */
+.track-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.track-control-label {
+  font-size: 0.7rem;
+  color: #888;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Pattern Library button */
+.track.midi-track .btn-outline-primary {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+
+/* MIDI indicator */
+.track.midi-track .midi-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: #92ce84;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Visual separation */
+.track.midi-track + .track {
+  border-top: 1px solid #444;
+}
+
+/* Background for MIDI tracks */
+.track.midi-track .track-waveform {
+  background-color: #1f2a1f;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 39px,
+    rgba(255, 255, 255, 0.02) 39px,
+    rgba(255, 255, 255, 0.02) 40px
+  );
+}
+
+/* Instrument display */
+.track.midi-track .instrument-display {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.05)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.track.midi-track .instrument-display:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.08)
+  );
+  border-color: rgba(146, 206, 132, 0.3);
+}
+
+/* View mode buttons */
+.track.midi-track .btn-group.w-100 {
+  height: 32px;
+}
+
+.track.midi-track .btn-group .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Double-click hint */
+.track.midi-track .midi-track-display::after {
+  content: 'Double-click to edit';
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 0.65rem;
+  color: #666;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.track.midi-track .midi-track-display:hover::after {
+  opacity: 1;
+}
+
+.piano-roll-keyboard-container {
+  width: 100px !important;
+  min-width: 100px !important;
+  background-color: #232323;
+  border-right: 1px solid #444;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  height: 100%;
+}
+
+.piano-roll-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  min-height: 0; /* Important for flex children */
+}
+
+.piano-roll-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  padding: 0 !important;
+  min-height: 0; /* Important for flex children */
+}
+
+/* Remove older slot-based/double-height blocks for MIDI to avoid conflicts */
+
+/* Compact control tab buttons */
+.track.midi-track .control-tabs {
+  margin-bottom: 0.25rem;
+}
+
+.track.midi-track .control-tabs .btn {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  height: 20px;
+}
+
+/* Layout consistency: enforce exact 80px + 200px left gutter
+   so timeline/playhead math (subtract 280px) always aligns.
+   Use border-box so padding/borders are included in the fixed widths. */
+.track-sidebar,
+.timeline-sidebar-spacer {
+  box-sizing: border-box;
+}
+
+.track-controls,
+.timeline-controls-spacer {
+  box-sizing: border-box;
+  width: 200px;
+  min-width: 200px;
+}
+
+/* MIDI track controls must not exceed 200px regardless of padding */
+.track.midi-track .track-controls {
+  box-sizing: border-box;
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+.track.midi-track {
+  height: 240px !important;
+  max-height: 240px !important;
+  min-height: 240px !important;
+}
+
+.track.midi-track .track-controls {
+  height: 240px !important;
+  min-height: 240px !important;
+  max-height: 240px !important;
+}
+
+.track.midi-track .track-waveform {
+  height: 240px !important;
+  min-height: 240px !important;
+  max-height: 240px !important;
+}
+
+.track.midi-track .track-waveform canvas {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 240px !important;
+  max-height: none !important;
+  display: block !important;
+}
+
+.track.midi-track .midi-track-display {
+  height: 240px !important;
+  min-height: 240px !important;
+  max-height: 240px !important;
+}
+
+/* Compact control tab buttons */
+.track.midi-track .control-tabs {
+  margin-bottom: 0.25rem;
+}
+
+.track.midi-track .control-tabs .btn {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  height: 20px;
+}
+
+/* Track Controls - Vertical Stack Layout */
+.track-controls {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 12px;
+}
+
+/* Volume/Pan controls container */
+.track-audio-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+/* Individual control row */
+.track-control-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Control labels */
+.track-control-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  width: 20px;
+  text-align: center;
+}
+
+/* Sliders */
+.track-volume-slider,
+.track-pan-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #333;
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.track-volume-slider::-webkit-slider-thumb,
+.track-pan-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #4a7c9e;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid #5a8cae;
+}
+
+/* Action buttons container */
+.track-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+}
+
+/* S/M/Delete buttons row */
+.track-button-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+/* Individual action buttons */
+.track-controls .btn-sm {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* Delete button full width */
+.track-delete-btn {
+  width: 100% !important;
+}
+
+/* Track Structure */
+.track {
+  display: flex;
+  height: 120px;
+  border: 1px solid #444;
+  background-color: #1a1a1a;
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.track:hover {
+  background-color: #1f1f1f;
+}
+
+.track.track-selected {
+  border-color: #cbb677;
+  box-shadow: 0 0 5px rgba(203, 182, 119, 0.3);
+}
+
+/* Track Controls - Left Side */
+.track-controls {
+  width: 200px;
+  min-width: 200px;
+  background-color: #242424;
+  border-right: 1px solid #3a3a3a;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Track Header */
+.track-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.track-name-input {
+  width: 100%;
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  color: #fff !important;
+  font-size: 12px;
+  padding: 4px 8px;
+  height: 28px;
+}
+
+.track-name-input:focus {
+  background-color: #333 !important;
+  border-color: #666 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Audio Controls Container */
+.track-audio-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Control Row */
+.track-control-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-icon {
+  color: #888;
+  width: 16px;
+  flex-shrink: 0;
+}
+
+/* Volume/Pan Sliders */
+.track-volume-slider,
+.track-pan-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #333;
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.track-volume-slider::-webkit-slider-thumb,
+.track-pan-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #92ce84;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid #76b165;
+}
+
+.track-volume-slider::-moz-range-thumb,
+.track-pan-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #92ce84;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid #76b165;
+}
+
+.control-value {
+  font-size: 10px;
+  color: #666;
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Action Buttons Container */
+.track-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Button Row */
+.track-button-row {
+  display: flex;
+  gap: 4px;
+}
+
+.track-button-row .btn {
+  flex: 1;
+}
+
+/* All Track Buttons */
+.track-controls .btn {
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  min-height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.track-controls .btn-sm {
+  padding: 3px 6px !important;
+}
+
+/* Track Waveform Area - Right Side */
+.track-waveform {
+  flex: 1;
+  background-color: #2a2a2a;
+  position: relative;
+  overflow: hidden;
+  height: 120px;
+  /* Add grid background */
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+/* Dark background for better contrast */
+.track-waveform::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure canvas is above the background effect */
+.track-waveform canvas {
+  position: relative !important;
+  z-index: 2;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  max-height: none !important;
+}
+
+/* Modal Close Button - High Contrast Styles */
+.modal-header .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.9 !important;
+  background-size: 1.5em !important;
+  transition: all 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1 !important;
+  transform: scale(1.1);
+  filter: brightness(0) invert(1);
+}
+
+.modal-header .btn-close:focus {
+  opacity: 1 !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.3) !important;
+  filter: brightness(0) invert(1);
+}
+
+/* Alternative: Use a dark background on the close button itself */
+.modal .modal-header {
+  position: relative;
+}
+
+.modal .modal-header .btn-close {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
+.modal .modal-header .btn-close:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}

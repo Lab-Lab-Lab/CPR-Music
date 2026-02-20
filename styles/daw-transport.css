@@ -1,0 +1,234 @@
+/* ========================
+   DAW TRANSPORT CONTROLS
+   ======================== */
+
+/* Transport Container */
+.multitrack-transport-container {
+  position: relative;
+  background-color: #2d2c29;
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+  padding: 0.75rem 1rem;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* No special positioning needed when piano is visible - transport stays in flow */
+
+.multitrack-transport-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(146, 206, 132, 0.3) 50%,
+    transparent 100%
+  );
+}
+
+/* Bottom Section Alternative */
+.multitrack-bottom-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #2d2c29;
+  border-top: 1px solid #444;
+  padding: 0.5rem;
+  z-index: 100;
+}
+
+/* Transport Controls Layout */
+.multitrack-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Transport Buttons */
+.multitrack-transport .btn {
+  background-color: #3a3a3a;
+  border: 1px solid #4a4a4a;
+  color: #d0d0d0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.multitrack-transport .btn:hover:not(:disabled) {
+  background-color: #4a4a4a;
+  border-color: #5a5a5a;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.multitrack-transport .btn:active:not(:disabled) {
+  background-color: #2a2a2a;
+  transform: translateY(1px);
+}
+
+.multitrack-transport .btn:disabled {
+  background-color: #2a2a2a;
+  border-color: #333;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Button Group Styling */
+.multitrack-transport .btn-group > .btn:first-child,
+.multitrack-transport .btn-group > .btn:nth-child(2) {
+  border-radius: 4px 0 0 4px;
+}
+
+.multitrack-transport .btn-group > .btn:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+/* Primary Transport Buttons */
+.multitrack-transport .btn-primary {
+  background-color: #4a7c9e;
+  border-color: #5a8cae;
+  color: #fff;
+}
+
+.multitrack-transport .btn-primary:hover:not(:disabled) {
+  background-color: #5a8cae;
+  border-color: #6a9cbe;
+}
+
+/* Warning State Buttons (Recording) */
+.multitrack-transport .btn-warning {
+  background-color: #d4910b;
+  border-color: #f0ad4e;
+  color: #fff;
+}
+
+.multitrack-transport .btn-warning:hover:not(:disabled) {
+  background-color: #f0ad4e;
+  border-color: #ffcc00;
+  box-shadow: 0 0 8px rgba(240, 173, 78, 0.5);
+}
+
+/* Secondary Buttons */
+.multitrack-transport .btn-secondary {
+  background-color: #5a5a5a;
+  border-color: #6a6a6a;
+}
+
+.multitrack-transport .btn-secondary:hover:not(:disabled) {
+  background-color: #6a6a6a;
+  border-color: #7a7a7a;
+}
+
+/* Outline Secondary Buttons */
+.multitrack-transport .btn-outline-secondary {
+  background-color: transparent;
+  border-color: #6a6a6a;
+  color: #d0d0d0;
+}
+
+.multitrack-transport .btn-outline-secondary:hover:not(:disabled) {
+  background-color: #6a6a6a;
+  color: #fff;
+}
+
+/* Danger Buttons (Stop, Clear, etc.) */
+.multitrack-transport .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Button Groups */
+.multitrack-transport .btn-group {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Progress Bar */
+.multitrack-transport .progress {
+  height: 6px;
+  background-color: #333;
+  border-radius: 3px;
+  overflow: hidden;
+  width: 200px;
+}
+
+.multitrack-transport .progress-bar {
+  background-color: #92ce84;
+  transition: width 0.1s ease;
+}
+
+/* Time Display */
+.multitrack-transport .time-display {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #92ce84;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Volume/Tempo Controls */
+.multitrack-transport .form-range {
+  width: 100px;
+  margin: 0;
+}
+
+/* Track Info Display */
+.multitrack-transport .track-info {
+  font-size: 0.8rem;
+  color: #999;
+  min-width: 120px;
+}
+
+/* Audio Track Specific Styles */
+.track.audio-track {
+  background-color: #2a2a1a;
+}
+
+.track.audio-track .track-controls,
+.track.audio-track .track-waveform {
+  background-color: #2a2a1a;
+}
+
+/* Allow audio waveform canvas to fill taller audio tracks */
+.track.audio-track .track-waveform canvas {
+  height: 100% !important;
+  max-height: none !important;
+}
+
+/* Layout Overrides for Transport */
+.multitrack-editor-container .row {
+  margin: 0 !important;
+}
+
+.multitrack-editor-container [class*='col-'] {
+  padding: 0 !important;
+}
+
+.multitrack-main-content .row {
+  height: 100%;
+  margin: 0 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+}
+
+.multitrack-main-content .col,
+.multitrack-main-content [class*='col-'] {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0;
+  height: 100%;
+}

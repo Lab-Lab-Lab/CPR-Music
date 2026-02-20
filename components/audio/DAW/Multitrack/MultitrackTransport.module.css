@@ -1,0 +1,86 @@
+/* MultitrackTransport.module.css */
+
+.transportBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--daw-timeline-bg, #2a2a2a);
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+  padding: 0.5rem 1rem;
+  min-height: 60px;
+}
+
+.playbackControls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.timeDisplay {
+  margin-left: 1rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+  min-width: 120px;
+}
+
+.masterControls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.knobControl {
+  display: flex;
+  align-items: center;
+}
+
+/* Recording animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.recording-pulse {
+  animation: pulse 1s ease-in-out infinite;
+  color: #ff0000;
+}
+
+.recording-active {
+  background-color: #ff0000 !important;
+  border-color: #ff0000 !important;
+}
+
+.recording-active:hover {
+  background-color: #cc0000 !important;
+  border-color: #cc0000 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .transportBar {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .playbackControls {
+    gap: 0.25rem;
+  }
+
+  .masterControls {
+    gap: 1rem;
+  }
+
+  .timeDisplay {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+  }
+}

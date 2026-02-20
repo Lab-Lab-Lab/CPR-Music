@@ -1,0 +1,37 @@
+/* RecordingModeIndicator.module.css */
+
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.noTrack {
+  color: #666;
+  font-style: italic;
+}
+
+.icon {
+  color: #ff4444;
+  font-size: 1rem;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.trackName {
+  color: #fff;
+  font-weight: 500;
+}
+
+.position {
+  color: #888;
+  font-size: 0.75rem;
+}

@@ -1,0 +1,32 @@
+.knobContainer {
+  display: inline-block;
+  cursor: grab;
+  user-select: none;
+  position: relative;
+}
+
+.knobContainer:active {
+  cursor: grabbing;
+}
+
+.knobSvg {
+  display: block;
+}
+
+.valueArc {
+  transition: stroke-dasharray 0.1s ease;
+}
+
+/* Add subtle shadow for depth */
+.knobContainer::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  filter: blur(4px);
+}

@@ -12,12 +12,14 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  // i18n: {
-  //   locales: ['en'],
-  //   defaultLocale: 'en',
-  // },
-  output: 'export',
-  // basePath: `${process.env.PAGES_BASE_PATH}`, // needed this before the DNS A Records propagated.
+  typescript: {
+    // Allow production builds to complete even with type errors
+    ignoreBuildErrors: true,
+  },
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
 };
 
 // Injected content via Sentry wizard below

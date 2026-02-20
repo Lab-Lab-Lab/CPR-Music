@@ -5,11 +5,18 @@ import { SessionProvider } from 'next-auth/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/bootstrap.min-musiccpr.css';
 import '../styles/global.css';
+import '../styles/daw-styles.css';
+import '../styles/daw-multitrack.css';
+import '../styles/daw-track-controls.css';
+import '../styles/daw-waveforms.css';
+import '../styles/daw-midi.css';
+import '../styles/daw-transport.css';
+import '../styles/effectsRack.css';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import wrapper from '../store';
 
-export function App({ Component, pageProps: { session, ...pageProps } }) {
+function App({ Component, pageProps: { session, ...pageProps } }) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

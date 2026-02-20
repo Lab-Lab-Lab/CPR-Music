@@ -11,7 +11,7 @@ import Navigation from './nav';
 import styles from './layout.module.css';
 import { getUserProfile, gotUser } from '../actions';
 
-const PUBLIC_PATHS = ['/', '/about', '/auth/signin', '/api/auth/signout'];
+const PUBLIC_PATHS = ['/', '/about', '/auth/signin', '/api/auth/signout', '/studio', '/silence-sandbox/catch-dropped-audio'];
 
 export default function Layout({ children }) {
   const router = useRouter();

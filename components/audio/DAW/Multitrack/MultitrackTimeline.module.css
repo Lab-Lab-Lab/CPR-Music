@@ -1,0 +1,24 @@
+/* MultitrackTimeline.module.css */
+
+.timelineContainer {
+  height: 40px;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.timelineContainer::-webkit-scrollbar {
+  height: 0;
+}
+
+.timelineCanvas {
+  display: block;
+  height: 40px;
+}
+
+.timelineCanvas:hover {
+  cursor: crosshair;
+}

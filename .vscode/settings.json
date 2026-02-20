@@ -1,8 +1,0 @@
-{
-  "[javascript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
-  "[javascriptreact]": { "editor.defaultFormatter": "rvest.vs-code-prettier-eslint" },
-  "[typescript]": { "editor.defaultFormatter": "rvest.vs-code-prettier-eslint" },
-  "editor.formatOnPaste": true,
-  "editor.formatOnSave": true,
-  "editor.formatOnType": true
-}

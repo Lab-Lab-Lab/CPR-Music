@@ -8,11 +8,19 @@ import {
   fetchSingleStudentAssignment,
   postRecording,
 } from '../../../../../../actions';
-import Recorder from '../../../../../../components/recorder';
 import StudentAssignment from '../../../../../../components/student/assignment';
+import { DAWProvider } from '../../../../../../contexts/DAWProvider';
 
 const FlatEditor = dynamic(
   () => import('../../../../../../components/flatEditor'),
+  {
+    ssr: false,
+  },
+);
+
+// Import the recorder
+const Recorder = dynamic(
+  () => import('../../../../../../components/recorder'),
   {
     ssr: false,
   },
@@ -83,8 +91,6 @@ export default function PerformMelody() {
     console.log('preferredSample', preferredSample);
   }, [assignment]);
 
-  // TODO: maybe I should let studentAssignment render anyway but then handle missing things at a lower level
-  // return assignment && assignment?.id && assignment?.part ? (
   return (
     <StudentAssignment assignment={assignment}>
       {parsedScore === undefined ? (
@@ -104,9 +110,9 @@ export default function PerformMelody() {
         <>
           <FlatEditor score={parsedScore} />
           {assignment?.part?.sample_audio && (
-            <dl>
+            <dl className='mb-0'>
               <dt>Sample Recording</dt>
-              <dd>
+              <dd className='mb-0'>
                 {
                   // eslint-disable-next-line jsx-a11y/media-has-caption
                   <audio controls src={preferredSample} />
@@ -117,20 +123,21 @@ export default function PerformMelody() {
         </>
       )}
       {partType && (
-        <Recorder
-          accompaniment={assignment?.part?.piece?.accompaniment}
-          submit={({ audio, submissionId }) =>
-            dispatch(
-              postRecording({
-                token: userInfo.token,
-                slug,
-                assignmentId: assignment.id,
-                audio,
-                submissionId,
-              }),
-            )
-          }
-        />
+        <DAWProvider>
+          <Recorder
+            accompaniment={assignment?.part?.piece?.accompaniment}
+            submit={(audio) =>
+              dispatch(
+                postRecording({
+                  token: userInfo.token,
+                  slug,
+                  assignmentId: assignment.id,
+                  audio,
+                }),
+              )
+            }
+          />
+        </DAWProvider>
       )}
     </StudentAssignment>
   );

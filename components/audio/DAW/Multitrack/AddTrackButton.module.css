@@ -1,0 +1,64 @@
+/* AddTrackButton.module.css */
+
+.addTrackContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  padding: 8px;
+  border-bottom: 1px solid #333;
+  background-color: rgba(255, 255, 255, 0.02);
+  /* Ensure button is always visible */
+  position: relative;
+  z-index: 10;
+}
+
+.addTrackButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 200px;
+  padding: 12px 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px dashed #555;
+  border-radius: 8px;
+  color: #888;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addTrackButton:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #7bafd4;
+  color: #7bafd4;
+  transform: scale(1.02);
+}
+
+.addTrackButton:active {
+  transform: scale(0.98);
+}
+
+.plusIcon {
+  font-size: 20px;
+}
+
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .addTrackButton {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .plusIcon {
+    font-size: 16px;
+  }
+}
