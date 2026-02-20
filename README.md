@@ -34,3 +34,8 @@ This is the frontend for MusicCPR.org
 1. package.json needs to specify the different port
     * change the `start` line in package.json to `"start": "next start -p 3003"`
 1. .env files may need to be copied from prior versions 
+
+
+## GitHub Container Registry (GHCR)
+
+**Note:** For the workflow to push packages, you may need to ensure your repository settings allow GitHub Actions to create packages. Go to Settings → Actions → General → Workflow permissions and ensure "Read and write permissions" is enabled.
