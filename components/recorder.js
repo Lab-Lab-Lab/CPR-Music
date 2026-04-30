@@ -986,16 +986,11 @@ function MidiTable({ value, onChange }) {
   )
 }
 
-// Convert backend-hosted media URLs to relative paths so Next.js proxies them
-// (avoids CORS on local dev where Django serves files from localhost:8000).
-// S3 signed URLs are passed through as-is — stripping them loses auth query params.
+// Proxy audio URLs through the server-side audio-proxy route so the browser
+// never fetches cross-origin (avoids S3 CORS issues in all environments).
 function toRelativeMediaUrl(url) {
   if (!url) return null;
-  const parsed = new URL(url);
-  if (parsed.hostname === new URL(process.env.NEXT_PUBLIC_BACKEND_HOST).hostname) {
-    return parsed.pathname;
-  }
-  return url;
+  return `/api/audio-proxy?url=${encodeURIComponent(url)}`;
 }
 
 function InstrumentConfigEditor({ show, mode, onSaved, onAudioFileChange, onMidiDeviceSelect, onKeyMapChange, persistedSelectedId, onSelectedIdChange, configs, setConfigs }) {
