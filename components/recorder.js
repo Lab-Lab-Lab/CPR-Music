@@ -1577,15 +1577,10 @@ export function Recorder({ submit, accompaniment }) {
   };
 
   const submitRecording = (i, submissionId) => {
-    const formData = new FormData(); // TODO: make filename reflect assignment
-    formData.append(
-      'file',
-      new File([blobInfo[i].data], 'student-recoding.mp3', {
-        mimeType: 'audio/mpeg',
-      }),
-    );
-    // dispatch(submit({ audio: formData }));
-    submit({ audio: formData, submissionId });
+    const blob = new File([blobInfo[i].data], 'student-recording.mp3', {
+      type: 'audio/mpeg',
+    });
+    submit(blob);
   };
 
   function deleteTake(index) {

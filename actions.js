@@ -595,7 +595,7 @@ export function postRecording({
           window.__PENDING_ACTIVITY_LOG_TIMESTAMP__ = null;
         }
 
-        fetch(
+        return fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_HOST}/api/courses/${slug}/assignments/${assignmentId}/submissions/${submission.id}/attachments/`,
           {
             headers: {
@@ -622,6 +622,7 @@ export function postRecording({
         dispatch(uploadDone(submissionId));
       })
       .catch((err) => {
+        console.error('Upload failed:', err);
         dispatch(uploadFailed(submissionId));
       });
   };
