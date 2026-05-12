@@ -153,7 +153,7 @@ export class SubtractiveSynth extends BaseInstrument {
     const sustainLevel = velocity * this.config.sustain * 0.3;
     const peakLevel = velocity * 0.3;
 
-    // Start just above 0 so micro‑notes don’t step upward at release
+    // Start just above 0 so micro‑notes don't step upward at release
     envelope.gain.setValueAtTime(0.0001, time);
     envelope.gain.linearRampToValueAtTime(peakLevel, attackTime);
     envelope.gain.exponentialRampToValueAtTime(sustainLevel + 0.001, decayTime);

@@ -45,7 +45,7 @@ export default function GradePerform({ submissions }) {
 
             if (
               submission?.assignment?.activity?.activity_type?.category ===
-                'Create' &&
+              'Create' &&
               submission?.content
             ) {
               try {
@@ -57,7 +57,7 @@ export default function GradePerform({ submissions }) {
 
             if (
               submission?.assignment?.activity?.activity_type?.category ===
-                'Respond' &&
+              'Respond' &&
               submission?.content
             ) {
               const content = JSON.parse(submission.content);
@@ -125,13 +125,12 @@ export default function GradePerform({ submissions }) {
                     <ListGroup className="list-group-flush">
                       {/* TODO: what time should I show here? */}
                       {submission.attachments?.[0]?.submitted && (
-                        <ListGroupItem>
-                          <time dateTime={submission.attachments[0].submitted}>
-                            {submission.attachments[0].submitted}
+                        <ListGroupItem>Submitted: <time dateTime={submission.attachments[0].submitted}>
+                            {new Date(submission.attachments[0].submitted).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                           </time>
                         </ListGroupItem>
                       )}
-                      <ListGroupItem>{submission.id}</ListGroupItem>
+                      <ListGroupItem>Submission ID: {submission.id}</ListGroupItem>
                       {submission?.assignment?.activity?.activity_type
                         ?.category === 'Create' &&
                         submission?.content && (
@@ -158,12 +157,12 @@ export default function GradePerform({ submissions }) {
                   </Card>
                 </Col>
                 <Col onKeyDown={gradeKeyDown}>
-                  <RTE submission={submission} />
+                  <RTE submission={submission} teacher={true}/>
                 </Col>
               </Row>
             );
           })}
-      </Col>
-    </Row>
+      </Col >
+    </Row >
   );
 }

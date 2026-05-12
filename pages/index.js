@@ -83,11 +83,11 @@ function Index() {
             Teachers who provide their students with a standards-based music
             education facilitate opportunities for every student to develop
             skill and knowledge related to creating original music, performing
-            their own and others’ music, responding to music, and connecting in,
+            their own and others' music, responding to music, and connecting in,
             around, and through music. While MusicCPR is framed through these
             four artistic processes as conceptualized in National Standards for
             Arts Education, most states have comparable policy documents that
-            outline what should be part of students’ P-12 music education
+            outline what should be part of students' P-12 music education
             experiences. MusicCPR is intended to bridge the gap between these
             policies and common practice by providing a free, research-based
             resource for any music teacher who wishes to provide their students
@@ -101,11 +101,11 @@ function Index() {
         Teachers who provide their students with a standards-based music
         education facilitate opportunities for every student to develop skill
         and knowledge related to creating original music, performing their own
-        and others’ music, responding to music, and connecting in, around, and
+        and others' music, responding to music, and connecting in, around, and
         through music. While MusicCPR is framed through these four artistic
         processes as conceptualized in National Standards for Arts Education,
         most states have comparable policy documents that outline what should be
-        part of students’ P-12 music education experiences. MusicCPR is intended
+        part of students' P-12 music education experiences. MusicCPR is intended
         to bridge the gap between these policies and common practice by
         providing a free, research-based resource for any music teacher who
         wishes to provide their students opportunities to create, perform,
@@ -155,7 +155,7 @@ function Index() {
             Valid And Reliable Assessment Rubrics
           </h3>{' '}
           provide students, teachers, parents, and other stakeholders with
-          valuable information about each student’s progress.
+          valuable information about each student's progress.
         </Col>
         <Col
           sm={2}
