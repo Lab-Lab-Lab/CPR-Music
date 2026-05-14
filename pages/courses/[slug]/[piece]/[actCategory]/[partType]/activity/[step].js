@@ -132,6 +132,11 @@ export default function ActivityPage() {
     }
   }, [slug, loadedActivities, activities, partType, piece, actCategory, dispatch]);
 
+  useEffect(() => {
+    setParsedScore(undefined);
+    setPreferredSample(undefined);
+  }, [partType]);
+
   // Parse score and get preferred sample
   useEffect(() => {
     if (!assignment) return;

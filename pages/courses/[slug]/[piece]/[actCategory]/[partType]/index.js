@@ -68,6 +68,11 @@ export default function PerformMelody() {
   }, [slug, loadedActivities, activities, partType]);
 
   useEffect(() => {
+    setParsedScore(undefined);
+    setPreferredSample(undefined);
+  }, [partType]);
+
+  useEffect(() => {
     const score = assignment?.part?.transpositions?.filter(
       (partTransposition) =>
         partTransposition.transposition.name ===
