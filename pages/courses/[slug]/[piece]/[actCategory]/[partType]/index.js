@@ -70,7 +70,7 @@ export default function PerformMelody() {
   useEffect(() => {
     setParsedScore(undefined);
     setPreferredSample(undefined);
-  }, [partType]);
+  }, [piece, partType]);
 
   useEffect(() => {
     const score = assignment?.part?.transpositions?.filter(

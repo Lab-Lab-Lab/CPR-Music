@@ -135,7 +135,7 @@ export default function ActivityPage() {
   useEffect(() => {
     setParsedScore(undefined);
     setPreferredSample(undefined);
-  }, [partType]);
+  }, [piece, partType]);
 
   // Parse score and get preferred sample
   useEffect(() => {
