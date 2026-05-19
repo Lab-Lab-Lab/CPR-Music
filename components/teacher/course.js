@@ -17,6 +17,7 @@ import {
   mutateAssignPiece,
   getStudentAssignments,
 } from '../../api';
+import PieceActivityList from '../pieceActivityList';
 
 // for the teacher, it should:
 // 1. permit assigning of pieces
@@ -201,27 +202,11 @@ export default function TeacherCourseView() {
                   <Accordion.Body>
                     <Row>
                       <Col md={9}>
-                        <ListGroup>
-                          {piece.activities &&
-                            Object.values(piece.activities).length > 0 &&
-                            Object.keys(piece.activities).map((activityKey) => (
-                              <ListGroupItem
-                                key={activityKey}
-                                className="d-flex justify-content-between"
-                              >
-                                <span className="me-auto">{`${piece.activities[activityKey].category} ${piece.activities[activityKey].name}`}</span>
-                                <Link
-                                  href={`/courses/${slug}/${piece.slug}/${piece.activities[activityKey].category}/${piece.activities[activityKey].name}/grade`}
-                                  passHref
-                                  legacyBehavior
-                                >
-                                  <a className="btn btn-primary">
-                                    Grade <FaMarker />
-                                  </a>
-                                </Link>
-                              </ListGroupItem>
-                            ))}
-                        </ListGroup>
+                        <PieceActivityList
+                          slug={slug}
+                          piece={piece.slug}
+                          activities={piece.activities}
+                        />
                       </Col>
                       <Col style={{ textAlign: 'center' }}>
                         <Button

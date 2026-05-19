@@ -6,8 +6,9 @@ import { getStudentAssignments, mutateAssignmentInstrument } from '../../api';
 import SubmissionsStatusBadge from '../submissionStatusBadge';
 import { assnToContent, assnToKey } from './navActivityPicker';
 import InstrumentSelector from '../instrumentSelector';
+import PieceActivityList from '../pieceActivityList';
 
-function PieceAssignments({ piece, canEditInstruments }) {
+function PieceAssignments({ piece, canEditInstruments, isTeacher }) {
   const router = useRouter();
 
   const { slug } = router.query;
@@ -47,6 +48,20 @@ function PieceAssignments({ piece, canEditInstruments }) {
     return <p>You have no assignments for this piece at this time.</p>;
   }
 
+  // Build deduplicated activities map for teacher view
+  const pieceActivities = {};
+  if (isTeacher) {
+    for (const assn of assignments[piece]) {
+      const key = `${assn.activity_type_category}-${assn.activity_type_name}`;
+      if (!pieceActivities[key]) {
+        pieceActivities[key] = {
+          category: assn.activity_type_category,
+          name: assn.activity_type_name,
+        };
+      }
+    }
+  }
+
   return (
     <Card className="student-piece-activity-group">
       <Card.Header className="fw-bold">
@@ -58,25 +73,39 @@ function PieceAssignments({ piece, canEditInstruments }) {
           />
         )}
       </Card.Header>
-      <ListGroup>
-        {assignments[piece].map((assignment) => (
-          <ListGroupItem
-            key={`assn-${assignment.id}`}
-            className="d-flex justify-content-between"
-          >
-            <Link
-              passHref
-              legacyBehavior
-              href={`/courses/${slug}/${
-                assignment.piece_slug
-              }/${assnToKey(assignment, 'debug str this is from pieceAssignments')}`}
-            >
-              <a>{assnToContent(assignment)}</a>
-            </Link>
-            <SubmissionsStatusBadge assn={assignment} />
-          </ListGroupItem>
-        ))}
-      </ListGroup>
+      {isTeacher ? (
+        <Card.Body>
+          <PieceActivityList
+            slug={slug}
+            piece={piece}
+            activities={pieceActivities}
+          />
+        </Card.Body>
+      ) : (
+        <ListGroup>
+          {assignments[piece]
+            .filter((assn, i, arr) =>
+              arr.findIndex((a) => assnToKey(a) === assnToKey(assn)) === i
+            )
+            .map((assignment) => (
+              <ListGroupItem
+                key={`assn-${assignment.id}`}
+                className="d-flex justify-content-between"
+              >
+                <Link
+                  passHref
+                  legacyBehavior
+                  href={`/courses/${slug}/${
+                    assignment.piece_slug
+                  }/${assnToKey(assignment, 'debug str this is from pieceAssignments')}`}
+                >
+                  <a>{assnToContent(assignment)}</a>
+                </Link>
+                <SubmissionsStatusBadge assn={assignment} />
+              </ListGroupItem>
+            ))}
+        </ListGroup>
+      )}
     </Card>
   );
 }

@@ -25,6 +25,16 @@ function assnToKey(assignment, debugStr = '') {
   return assignment.activity_type_category;
 }
 
+// Full category/name path, used for grade routes which always need both segments
+function assnToGradeKey(assignment) {
+  const category = assignment.activity_type_category.startsWith('Connect')
+    ? 'Connect'
+    : assignment.activity_type_category.startsWith('Perform')
+      ? 'Perform'
+      : assignment.activity_type_category;
+  return `${category}/${assignment.activity_type_name}`;
+}
+
 // FIXME: probably should not need this function at all, this info should probably have come from the backend?
 function assnToContent(assignment) {
   let assnTypeCat = assignment.activity_type_category;
@@ -48,12 +58,15 @@ function NavActivityPicker(assignment) {
   const { slug, piece, actCategory = 'Create' } = router.query;
 
   const currentActivity = actCategory;
+  const isGrading = router.asPath.endsWith('/grade');
   const currentRouteSuffix = router.asPath.substring(
     `/courses/${slug}/${piece}/`.length,
-  );
+  ).replace(/\/grade$/, '');
 
   const changeActivity = (ev) => {
-    router.push(`/courses/${slug}/${piece}/${ev.target.value}`);
+    const value = ev.target.value;
+    const suffix = isGrading ? `${value}/grade` : value;
+    router.push(`/courses/${slug}/${piece}/${suffix}`);
   };
 
   const {
@@ -96,11 +109,19 @@ function NavActivityPicker(assignment) {
           defaultValue={currentRouteSuffix}
         >
           <option value="">Choose an activity</option>
-          {pieceAssignments.map((assn) => (
-            <option key={assnToKey(assn)} value={assnToKey(assn)}>
-              {assnToContent(assn)}
-            </option>
-          ))}
+          {pieceAssignments
+            .filter((assn, i, arr) => {
+              const keyFn = isGrading ? assnToGradeKey : assnToKey;
+              return arr.findIndex((a) => keyFn(a) === keyFn(assn)) === i;
+            })
+            .map((assn) => {
+              const value = isGrading ? assnToGradeKey(assn) : assnToKey(assn);
+              return (
+                <option key={value} value={value}>
+                  {assnToContent(assn)}
+                </option>
+              );
+            })}
         </Form.Select>
       </Form>
     </Nav.Item>

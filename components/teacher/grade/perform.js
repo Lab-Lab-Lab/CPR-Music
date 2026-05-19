@@ -30,7 +30,7 @@ export default function GradePerform({ submissions }) {
           <h2>
             Grading: {submissions?.[0]?.assignment?.part?.piece?.name} -{' '}
             {submissions?.[0]?.assignment?.activity?.activity_type?.category}{' '}
-            Activity
+            {submissions?.[0]?.assignment?.activity?.activity_type?.name} Activity
           </h2>
         ) : (
           <h2>No Submissions to Grade</h2>
