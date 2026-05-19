@@ -113,7 +113,7 @@ export default function PerformMelody() {
         </Alert>
       ) : (
         <>
-          <FlatEditor score={parsedScore} />
+          <FlatEditor key={`${piece}-${partType}`} score={parsedScore} />
           {assignment?.part?.sample_audio && (
             <dl className='mb-0'>
               <dt>Sample Recording</dt>

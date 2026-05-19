@@ -364,7 +364,7 @@ export default function ActivityPage() {
           {(stepNumber === 1 || stepNumber === 2) && parsedScore && (
             <div className="mb-4">
               <h3>Your Part</h3>
-              <FlatEditor score={parsedScore} />
+              <FlatEditor key={`${piece}-${partType}`} score={parsedScore} />
               {preferredSample && (
                 <dl className="mb-0 mt-3">
                   <dt>Sample Recording</dt>
