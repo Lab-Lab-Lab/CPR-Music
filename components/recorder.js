@@ -608,7 +608,7 @@ export default function RecorderRefactored({
           }
 
           // Always submit the pristine blob - DO NOT MODIFY IT
-          submit(blob);
+          submit({ audio: blob });
 
           // Clear the pending activity log after a delay
           if (activityLogData && typeof window !== 'undefined') {
@@ -1580,7 +1580,7 @@ export function Recorder({ submit, accompaniment }) {
     const blob = new File([blobInfo[i].data], 'student-recording.mp3', {
       type: 'audio/mpeg',
     });
-    submit(blob);
+    submit({ audio: blob, submissionId });
   };
 
   function deleteTake(index) {

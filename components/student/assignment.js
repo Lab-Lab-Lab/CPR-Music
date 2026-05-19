@@ -26,8 +26,8 @@ export default function StudentAssignment({ children, assignment }) {
     error,
     data: submissions,
   } = useQuery(
-    ['submissions', slug, assignment.id],
-    () => getMySubmissionsForAssignment({ slug, assignmentId: assignment.id }),
+    ['submissions', slug, assignment?.id],
+    () => getMySubmissionsForAssignment({ slug, assignmentId: assignment?.id }),
     {
       enabled: !!assignment && !!slug && !!assignment.id,
     },

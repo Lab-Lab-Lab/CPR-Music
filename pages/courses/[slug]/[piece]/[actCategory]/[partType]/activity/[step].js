@@ -65,7 +65,10 @@ export default function ActivityPage() {
   const { items: activities, loaded: loadedActivities } = useSelector(
     (state) => state.activities
   );
-  const assignment = useSelector((state) => state.selectedAssignment);
+  const [expectedAssignmentId, setExpectedAssignmentId] = useState();
+  const reduxAssignment = useSelector((state) => state.selectedAssignment);
+  const assignment =
+    reduxAssignment?.id === expectedAssignmentId ? reduxAssignment : undefined;
 
   // Local state - MUST be called before any conditional returns
   const [showConsentModal, setShowConsentModal] = useState(false);
@@ -121,6 +124,7 @@ export default function ActivityPage() {
           assn.activity_type_category === actCategory
       )?.[0]?.id;
 
+      setExpectedAssignmentId(assignmentId);
       if (assignmentId) {
         dispatch(
           fetchSingleStudentAssignment({
@@ -312,7 +316,7 @@ export default function ActivityPage() {
 
   if (isLoading) {
     return (
-      <StudentAssignment assignment={assignment}>
+      <StudentAssignment key={`${piece}-${partType}`} assignment={assignment}>
         <div className="text-center py-5">
           <div className="spinner-border" role="status">
             <span className="visually-hidden">Loading...</span>
@@ -323,7 +327,7 @@ export default function ActivityPage() {
   }
 
   return (
-    <StudentAssignment assignment={assignment}>
+    <StudentAssignment key={`${piece}-${partType}`} assignment={assignment}>
       <DAWProvider
         persistenceConfig={audioPersistenceConfig}
       >

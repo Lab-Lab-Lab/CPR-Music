@@ -43,7 +43,10 @@ export default function PerformMelody() {
     (state) => state.activities,
   );
 
-  const assignment = useSelector((state) => state.selectedAssignment);
+  const [expectedAssignmentId, setExpectedAssignmentId] = useState();
+  const reduxAssignment = useSelector((state) => state.selectedAssignment);
+  const assignment =
+    reduxAssignment?.id === expectedAssignmentId ? reduxAssignment : undefined;
   useEffect(() => {
     if (loadedActivities) {
       let comparablePartType = partType;
@@ -58,6 +61,7 @@ export default function PerformMelody() {
           assn.part_type === comparablePartType &&
           assn.activity_type_category === actCategory,
       )?.[0]?.id;
+      setExpectedAssignmentId(assignmentId);
       dispatch(
         fetchSingleStudentAssignment({
           slug,
@@ -97,7 +101,7 @@ export default function PerformMelody() {
   }, [assignment]);
 
   return (
-    <StudentAssignment assignment={assignment}>
+    <StudentAssignment key={`${piece}-${partType}`} assignment={assignment}>
       {parsedScore === undefined ? (
         <Alert variant="danger">
           <Alert.Heading>
@@ -131,13 +135,14 @@ export default function PerformMelody() {
         <DAWProvider>
           <Recorder
             accompaniment={assignment?.part?.piece?.accompaniment}
-            submit={(audio) =>
+            submit={({ audio, submissionId }) =>
               dispatch(
                 postRecording({
                   token: userInfo.token,
                   slug,
                   assignmentId: assignment.id,
                   audio,
+                  submissionId,
                 }),
               )
             }

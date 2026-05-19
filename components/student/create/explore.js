@@ -88,13 +88,14 @@ export default function CreativityActivity() {
         partTransposition.transposition.name === currentTransposition,
     )?.[0]?.flatio;
 
-  const submitCreativity = (audio) =>
+  const submitCreativity = ({ audio, submissionId }) =>
     dispatch(
       postRecording({
         slug,
         assignmentId: currentAssignment.id,
         audio,
         composition: composition.current,
+        submissionId,
       }),
     );
   let scoreJSON;
