@@ -357,9 +357,6 @@ export default function RecorderRefactored({
             echoCancellation: false,
             noiseSuppression: false,
             autoGainControl: false,
-            channelCount: 1,
-            sampleRate: 48000,
-            latency: 0,
           },
         })
         .then((stream) => {
