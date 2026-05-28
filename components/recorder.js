@@ -27,7 +27,6 @@ import { catchSilence, setupAudioContext } from '../lib/dawUtils';
 import StatusIndicator from './statusIndicator';
 import styles from '../styles/recorder.module.css';
 import { getInstrumentConfigurations, mutateInstrumentConfiguration, createInstrumentConfiguration, deleteInstrumentConfiguration } from "../api";
-import MicRecorder from 'mic-recorder-to-mp3';
 import { IoSettingsSharp } from "react-icons/io5";
 import Modal from 'react-bootstrap/Modal'
 import { Sampler, Recorder as toneRecorder, getDestination, loaded, start, Midi } from "tone";
@@ -1350,13 +1349,14 @@ const emptyDraft = () => ({
 });
 
 export function Recorder({ submit, accompaniment }) {
-  // const Mp3Recorder = new MicRecorder({ bitRate: 128 }); // 128 is default already
   const [isRecording, setIsRecording] = useState(false);
   const [blobURL, setBlobURL] = useState('');
   const [blobData, setBlobData] = useState();
   const [blobInfo, setBlobInfo] = useState([]);
   const [isBlocked, setIsBlocked] = useState(false);
-  const [recorder, setRecorder] = useState(new MicRecorder());
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
+  const mimeTypeRef = useRef('audio/webm');
   const dispatch = useDispatch();
   const [min, setMinute] = useState(0);
   const [sec, setSecond] = useState(0);
@@ -1508,14 +1508,14 @@ export function Recorder({ submit, accompaniment }) {
       return;
     }
     if (recordingType === "mic") {
-      //TODO make a prompt for the user to select if they are using midi or an instrument
       accompanimentRef.current.play();
-      recorder
-        .start()
-        .then(() => {
-          setIsRecording(true);
-        })
-        .catch((err) => console.error('problem starting recording', err));
+      chunksRef.current = [];
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'inactive') {
+        mediaRecorderRef.current.start(100);
+        setIsRecording(true);
+      } else {
+        console.error('problem starting recording: MediaRecorder not ready');
+      }
     } else {
       const permitted = recordingType === "midi" ? hasMidiPermission : hasKeyboardPermission;
       if (!permitted) {
@@ -1534,11 +1534,10 @@ export function Recorder({ submit, accompaniment }) {
     accompanimentRef.current.pause();
     accompanimentRef.current.load();
     if (recordingType === "mic") {
-
-      recorder
-        .stop()
-        .getMp3()
-        .then(([buffer, blob]) => {
+      const rec = mediaRecorderRef.current;
+      if (rec && rec.state === 'recording') {
+        rec.onstop = () => {
+          const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
           setBlobData(blob);
           const url = URL.createObjectURL(blob);
           setBlobURL(url);
@@ -1550,8 +1549,10 @@ export function Recorder({ submit, accompaniment }) {
             },
           ]);
           setIsRecording(false);
-        })
-        .catch((e) => console.error('error stopping recording', e));
+          chunksRef.current = [];
+        };
+        rec.stop();
+      }
 
     } else {
       tRecorder.current.stop()
@@ -1574,8 +1575,13 @@ export function Recorder({ submit, accompaniment }) {
   };
 
   const submitRecording = (i, submissionId) => {
-    const blob = new File([blobInfo[i].data], 'student-recording.mp3', {
-      type: 'audio/mpeg',
+    const data = blobInfo[i].data;
+    const ext = mimeTypeRef.current.includes('webm') ? 'webm'
+      : mimeTypeRef.current.includes('ogg') ? 'ogg'
+      : mimeTypeRef.current.includes('mp4') ? 'mp4'
+      : 'webm';
+    const blob = new File([data], `student-recording.${ext}`, {
+      type: data.type || mimeTypeRef.current,
     });
     submit({ audio: blob, submissionId });
   };
@@ -1604,9 +1610,37 @@ export function Recorder({ submit, accompaniment }) {
     ) {
       navigator.mediaDevices
         .getUserMedia({
-          audio: { echoCancellation: false, noiseSuppression: false },
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
         })
-        .then(() => {
+        .then((stream) => {
+          // Determine best supported MIME type
+          const types = [
+            'audio/webm;codecs=opus',
+            'audio/webm',
+            'audio/ogg;codecs=opus',
+            'audio/ogg',
+            'audio/mp4',
+          ];
+          let selectedType = 'audio/webm';
+          for (const type of types) {
+            if (MediaRecorder.isTypeSupported(type)) {
+              selectedType = type;
+              break;
+            }
+          }
+          mimeTypeRef.current = selectedType;
+
+          const recorder = new MediaRecorder(stream, { mimeType: selectedType });
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              chunksRef.current.push(e.data);
+            }
+          };
+          mediaRecorderRef.current = recorder;
           setIsBlocked(false);
         })
         .catch(() => {
