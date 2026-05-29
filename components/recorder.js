@@ -49,6 +49,7 @@ import {
 } from 'react-icons/fa';
 import WaveSurfer from 'wavesurfer.js';
 import { MdOutlineKeyboard } from 'react-icons/md';
+import HeadphoneReminder from './student/headphoneReminder';
 
 // Create a silent audio buffer as scratch audio to initialize wavesurfer
 const createSilentAudio = () => {
@@ -1728,6 +1729,7 @@ export function Recorder({ submit, accompaniment }) {
 
   return (
     <>
+      <Row><HeadphoneReminder /></Row>
       <Row>
         <Col>
           {isRecording ? (
