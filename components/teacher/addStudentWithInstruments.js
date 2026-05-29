@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
 import Link from 'next/link';
-import { Button } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { FaMusic } from 'react-icons/fa';
 import { fetchInstruments, fetchRoster } from '../../actions';
 
@@ -37,35 +37,46 @@ function StudentsWithInstruments() {
   return roster?.items && Object.values(roster.items).length > 1 ? (
     <div>
       <h2>Current Students</h2>
-      <div className="container">
-        {roster?.items && Object.values(roster.items).length && instruments ? (
-          Object.values(roster.items)
-            .filter((e) => e.role !== 'Teacher')
-            .map((enrollment, index) => (
-              <div className="row" key={enrollment.id}>
-                <div className="col-1">{index + 1}. </div>
-                <div className="col-3">{enrollment.user.name}</div>
-                <div className="col">
-                  {enrollment.instrument &&
-                  instruments[enrollment.instrument.id]
-                    ? instruments[enrollment.instrument.id].name
-                    : 'No Instrument Assigned'}
-                </div>
-              </div>
-            ))
-        ) : (
-          <Spinner
-            as="span"
-            animation="border"
-            size="sm"
-            role="status"
-            aria-hidden="true"
-            variant="primary"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        )}
-      </div>
+      {roster?.items && Object.values(roster.items).length && instruments ? (
+        <Table striped hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Instrument</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.values(roster.items)
+              .filter((e) => e.role !== 'Teacher')
+              .map((enrollment, index) => (
+                <tr key={enrollment.id}>
+                  <td>{index + 1}</td>
+                  <td>{enrollment.user.name}</td>
+                  <td>{enrollment.user.username}</td>
+                  <td>
+                    {enrollment.instrument &&
+                    instruments[enrollment.instrument.id]
+                      ? instruments[enrollment.instrument.id].name
+                      : 'No Instrument Assigned'}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </Table>
+      ) : (
+        <Spinner
+          as="span"
+          animation="border"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+          variant="primary"
+        >
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      )}
       <Link href={`/courses/${slug}/instruments`}>
         <Button className="my-3" variant="primary">
           Set Instrument Assignments <FaMusic />

@@ -79,8 +79,9 @@ export default function GradePerform({ submissions }) {
                   <Card>
                     <Card.Body>
                       <Card.Title>
-                        {submission.assignment.enrollment.user.name}
+                        {submission.assignment.enrollment.user.name} ({submission.assignment.enrollment.user.username})
                       </Card.Title>
+                      <Card.Subtitle>{submission.assignment.instrument.name}</Card.Subtitle>
                       <Card.Text>
                         {submission.attachments?.[0]?.file && (
                           // eslint-disable-next-line jsx-a11y/media-has-caption

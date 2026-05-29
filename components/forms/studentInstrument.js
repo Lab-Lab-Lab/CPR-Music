@@ -34,7 +34,7 @@ function StudentInstrument({ enrollment, token, options: instruments }) {
   return (
     <Form.Group as={Row} className="mb-3" controlId="formRosterCSV">
       <Form.Label column sm={2}>
-        Instrument for {enrollment.user.name}
+        {enrollment.user.name} ({enrollment.user.username})
       </Form.Label>
       <Col sm={6}>
         {instruments && instruments.length ? (
