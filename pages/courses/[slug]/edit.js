@@ -18,7 +18,7 @@ export default function EditCourse() {
     data: enrollments,
   } = useQuery('enrollments', getEnrollments, { staleTime: 5 * 60 * 1000 });
   const currentEnrollment =
-    enrollments && enrollments.filter((elem) => elem.course.slug === slug)[0];
+    Array.isArray(enrollments) && enrollments.filter((elem) => elem.course.slug === slug)[0];
 
   return isLoading ? (
     <Spinner
