@@ -22,7 +22,7 @@ export default function StatusIndicator({ statusId }) {
     ) : status === UploadStatusEnum.Erroneous ? (
       <FaTimesCircle className="show-out" />
     ) : status === UploadStatusEnum.Success ? (
-      <FaCheck className="show-out" />
+          <>Submitted <FaCheck className="show-out" /></>
     ) : null
   );
 }

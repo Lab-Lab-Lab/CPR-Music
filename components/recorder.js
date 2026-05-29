@@ -1731,16 +1731,17 @@ export function Recorder({ submit, accompaniment }) {
     <>
       <Row><HeadphoneReminder /></Row>
       <Row>
+        
         <Col>
           {isRecording ? (
             <Button onClick={stopRecording}>
-              <FaStop /> {String(min).padStart(2, '0')}:
+              <FaStop /> Stop {String(min).padStart(2, '0')}:
               {String(sec).padStart(2, '0')}
             </Button>
           ) : (
             <>
               <Button onClick={startRecording}> {/*idk about the disabled here */}
-                <FaMicrophone />
+                <FaMicrophone /> Start Recording
               </Button>
               {/*<Config RecordingTypeChanged={handleRecordingTypeChange} value={recordingType}></Config>*/}
               <Button variant="secondary" onClick={handleShow}>
@@ -1818,7 +1819,7 @@ export function Recorder({ submit, accompaniment }) {
                     <Button
                       onClick={() => submitRecording(i, `recording-take-${i}`)}
                     >
-                      <FaCloudUploadAlt />
+                      <FaCloudUploadAlt /> Submit
                     </Button>
                     <Button onClick={() => deleteTake(i)}>
                       <FaRegTrashAlt />

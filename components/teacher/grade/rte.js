@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { mutateGradeSubmission } from '../../../api';
 import { beginUpload, uploadFailed, uploadSucceeded } from '../../../actions';
 import StatusIndicator from '../../statusIndicator';
+import { FaCloudUploadAlt } from 'react-icons/fa';
 
 export default function RTE({ submission, submitAction, autoFocus = false, teacher = false }) {
   const router = useRouter();
@@ -191,7 +192,7 @@ export default function RTE({ submission, submitAction, autoFocus = false, teach
         </dd>
       </dl>
       <Button variant="primary" type="submit" className="mb-3">
-        Submit
+        <FaCloudUploadAlt /> Submit
       </Button>{' '}
       <StatusIndicator
         statusId={
