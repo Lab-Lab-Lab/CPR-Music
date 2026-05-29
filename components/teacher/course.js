@@ -7,9 +7,12 @@ import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Row from 'react-bootstrap/Row';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 import Alert from 'react-bootstrap/Alert';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import {
   getAssignedPieces,
   getAllPieces,
@@ -17,6 +20,7 @@ import {
   mutateAssignPiece,
   getStudentAssignments,
 } from '../../api';
+import { fetchRoster } from '../../actions';
 import PieceActivityList from '../pieceActivityList';
 
 // for the teacher, it should:
@@ -30,6 +34,18 @@ export default function TeacherCourseView() {
   const router = useRouter();
   const { slug } = router.query;
   const [assignError, setAssignError] = useState(null);
+  const dispatch = useDispatch();
+  const roster = useSelector((state) => state.roster);
+
+  useEffect(() => {
+    if (slug && (!roster.loaded || roster.courseSlug !== slug)) {
+      dispatch(fetchRoster({ courseSlug: slug }));
+    }
+  }, [slug, roster.loaded, roster.courseSlug, dispatch]);
+
+  const hasStudents =
+    roster?.items &&
+    Object.values(roster.items).some((e) => e.role !== 'Teacher');
   const {
     isLoadingPieces,
     error,
@@ -138,6 +154,22 @@ export default function TeacherCourseView() {
 
   return (
     <>
+      {roster.loaded && !hasStudents && (
+        <Row>
+          <Col>
+            <Alert variant="warning">
+              <Alert.Heading>No students in this course yet</Alert.Heading>
+              <p>
+                Please{' '}
+                <Link href={`/courses/${slug}/edit`}>
+                  add your students and set their instruments
+                </Link>{' '}
+                before assigning pieces.
+              </p>
+            </Alert>
+          </Col>
+        </Row>
+      )}
       {assignError && (
         <Row>
           <Col>
@@ -163,29 +195,48 @@ export default function TeacherCourseView() {
           <ListGroup>
             {allPieces &&
               allPieces
-                .filter((piece) => {
-                  let reslt = true;
-                  if (
-                    assignedPieces &&
-                    Object.values(assignedPieces).findIndex(
-                      (assignedPiece) => assignedPiece.id === piece.id,
-                    ) !== -1
-                  ) {
-                    reslt = false;
-                  }
-                  return reslt;
-                })
-                .map((piece, pidx) => (
-                  <ListGroupItem
-                    key={`${piece.id}`}
-                    className="d-flex justify-content-between align-items-center"
-                  >
-                    <div>{piece.name}</div>
-                    <Button onClick={() => assign(piece.piece_plan_id)}>
-                      Assign <FaPlus />
-                    </Button>
-                  </ListGroupItem>
-                ))}
+                .filter(
+                  (piece, idx, self) =>
+                    self.findIndex((p) => p.id === piece.id) === idx &&
+                    (!assignedPieces ||
+                      !Object.values(assignedPieces).some(
+                        (assignedPiece) =>
+                          assignedPiece.slug === piece.slug ||
+                          assignedPiece.id === piece.id,
+                      )),
+                )
+                .map((piece) =>
+                  !hasStudents ? (
+                    <OverlayTrigger
+                      key={`${piece.piece_plan_id}`}
+                      placement="top"
+                      overlay={
+                        <Tooltip>Please first add your students.</Tooltip>
+                      }
+                    >
+                      <div>
+                        <ListGroupItem
+                          className="d-flex justify-content-between align-items-center disabled"
+                        >
+                          <div>{piece.name}</div>
+                          <Button disabled>
+                            Assign <FaPlus />
+                          </Button>
+                        </ListGroupItem>
+                      </div>
+                    </OverlayTrigger>
+                  ) : (
+                    <ListGroupItem
+                      key={`${piece.piece_plan_id}`}
+                      className="d-flex justify-content-between align-items-center"
+                    >
+                      <div>{piece.name}</div>
+                      <Button onClick={() => assign(piece.piece_plan_id)}>
+                        Assign <FaPlus />
+                      </Button>
+                    </ListGroupItem>
+                  ),
+                )}
           </ListGroup>
         </Col>
         <Col>
