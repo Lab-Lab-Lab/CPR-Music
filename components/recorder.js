@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BiRename } from 'react-icons/bi';
-import {
-  Card,
-  Form,
-  Button,
-  ListGroup,
-  ListGroupItem,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
@@ -674,7 +672,7 @@ export default function RecorderRefactored({
             <ListGroup as="ol" numbered className="mt-2">
               <h3>Your Takes ({blobInfo.length})</h3>
               {blobInfo.map((take, i) => (
-                <ListGroupItem
+                <ListGroup.Item
                   key={take.url}
                   as="li"
                   className="d-flex justify-content-between"
@@ -727,7 +725,7 @@ export default function RecorderRefactored({
                       <FaRegTrashAlt /> Delete
                     </Button>
                   </div>
-                </ListGroupItem>
+                </ListGroup.Item>
               ))}
             </ListGroup>
           )}
@@ -1729,10 +1727,14 @@ export function Recorder({ submit, accompaniment }) {
 
   return (
     <>
-      <Row><HeadphoneReminder /></Row>
       <Row>
-        
+        <Col><HeadphoneReminder /></Col>
+      </Row>
+      <Row>
         <Col>
+          {/* <Alert variant="info">
+            <Alert.Heading></Alert.Heading>
+          </Alert> */}
           {isRecording ? (
             <Button onClick={stopRecording}>
               <FaStop /> Stop {String(min).padStart(2, '0')}:
