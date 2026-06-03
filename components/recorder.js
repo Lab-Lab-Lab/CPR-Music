@@ -1532,7 +1532,7 @@ export function Recorder({ submit, accompaniment }) {
 
   const stopRecording = (ev) => {
     accompanimentRef.current.pause();
-    accompanimentRef.current.load();
+    accompanimentRef.current.currentTime = 0;
     if (recordingType === "mic") {
       const rec = mediaRecorderRef.current;
       if (rec && rec.state === 'recording') {
