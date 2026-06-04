@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -73,10 +73,14 @@ export default function CreativityAuralActivity() {
         submissionId,
       }),
     );
-  let scoreJSON;
-  if (flatIOScoreForTransposition) {
-    scoreJSON = JSON.parse(flatIOScoreForTransposition);
-  }
+  const scoreJSON = useMemo(
+    () =>
+      flatIOScoreForTransposition
+        ? JSON.parse(flatIOScoreForTransposition)
+        : undefined,
+    [flatIOScoreForTransposition],
+  );
+  const blankScore = useMemo(() => ({ scoreId: 'blank' }), []);
   return flatIOScoreForTransposition ? (
     <>
       <FlatMelodyViewer score={scoreJSON} onLoad={setJson} />
@@ -113,9 +117,7 @@ export default function CreativityAuralActivity() {
           </Row>
           <FlatEditor
             edit
-            score={{
-              scoreId: 'blank',
-            }}
+            score={blankScore}
             submittingStatus={mutation.status}
             onUpdate={(data) => {
               composition.current = data;

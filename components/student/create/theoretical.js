@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -143,10 +143,13 @@ export default function CreativityActivity() {
         submissionId,
       }),
     );
-  let scoreJSON;
-  if (flatIOScoreForTransposition) {
-    scoreJSON = JSON.parse(flatIOScoreForTransposition);
-  }
+  const scoreJSON = useMemo(
+    () =>
+      flatIOScoreForTransposition
+        ? JSON.parse(flatIOScoreForTransposition)
+        : undefined,
+    [flatIOScoreForTransposition],
+  );
 
   const onMerged = useCallback((mergedData) => {
     totalScoreJSON.current = mergedData;

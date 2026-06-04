@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -98,10 +98,14 @@ export default function CreativityActivity() {
         submissionId,
       }),
     );
-  let scoreJSON;
-  if (flatIOScoreForTransposition) {
-    scoreJSON = JSON.parse(flatIOScoreForTransposition);
-  }
+  const scoreJSON = useMemo(
+    () =>
+      flatIOScoreForTransposition
+        ? JSON.parse(flatIOScoreForTransposition)
+        : undefined,
+    [flatIOScoreForTransposition],
+  );
+  const blankScore = useMemo(() => ({ scoreId: 'blank' }), []);
 
   const handleTonicUpdate = useCallback((data) => {
     tonicJson.current = data;
@@ -245,9 +249,7 @@ export default function CreativityActivity() {
           <h2>Final Composition</h2>
           <FlatEditor
             edit
-            score={{
-              scoreId: 'blank',
-            }}
+            score={blankScore}
             onUpdate={(data) => {
               composition.current = data;
             }}
