@@ -240,6 +240,14 @@ export function mutateSaveAudioState({ slug, assignmentId }) {
   };
 }
 
+export function getRoster(slug) {
+  return async () => {
+    const endpoint = `courses/${slug}/roster/`;
+    const json = await makeRequest(endpoint);
+    return json;
+  };
+}
+
 export async function getInstrumentConfigurations() {
   const endpoint = "configs/";
   const json = await makeRequest(endpoint);

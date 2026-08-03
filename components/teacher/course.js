@@ -1,10 +1,11 @@
-import { FaPlus, FaMarker, FaTrash } from 'react-icons/fa';
-import Accordion from 'react-bootstrap/Accordion';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Link from 'next/link';
@@ -16,8 +17,9 @@ import {
   mutateUnassignPiece,
   mutateAssignPiece,
   getStudentAssignments,
+  getRoster,
 } from '../../api';
-import PieceActivityList from '../pieceActivityList';
+import ActivityStats from './activityStats';
 
 // for the teacher, it should:
 // 1. permit assigning of pieces
@@ -56,6 +58,14 @@ export default function TeacherCourseView() {
   } = useQuery(['assignedPieces', slug], getAssignedPieces(assignments), {
     enabled: !!assignments,
   });
+  const { data: roster } = useQuery(['roster', slug], getRoster(slug), {
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
+  const studentCount = roster
+    ? roster.filter((e) => e.role !== 'Teacher').length
+    : 0;
+
   const unassignMutation = useMutation(mutateUnassignPiece(slug), {
     onMutate: async (unassignedPiece) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -157,77 +167,78 @@ export default function TeacherCourseView() {
           </Col>
         </Row>
       )}
-      <Row>
-        <Col>
-          <h2>Assign New Piece</h2>
-          <ListGroup>
-            {allPieces &&
-              allPieces
-                .filter((piece) => {
-                  let reslt = true;
-                  if (
-                    assignedPieces &&
-                    Object.values(assignedPieces).findIndex(
-                      (assignedPiece) => assignedPiece.id === piece.id,
-                    ) !== -1
-                  ) {
-                    reslt = false;
-                  }
-                  return reslt;
-                })
-                .map((piece, pidx) => (
-                  <ListGroupItem
-                    key={`${piece.id}`}
-                    className="d-flex justify-content-between align-items-center"
-                  >
-                    <div>{piece.name}</div>
-                    <Button onClick={() => assign(piece.piece_plan_id)}>
-                      Assign <FaPlus />
-                    </Button>
-                  </ListGroupItem>
-                ))}
-          </ListGroup>
-        </Col>
-        <Col>
+      {assignedPieces && Object.values(assignedPieces).length > 0 && (
+        <>
           <h2>Assigned Pieces</h2>
-
-          {assignedPieces && Object.values(assignedPieces).length > 0 ? (
-            <Accordion
-              defaultActiveKey={Object.values(assignedPieces)[0]}
-              alwaysOpen
-            >
-              {Object.values(assignedPieces).map((piece) => (
-                <Accordion.Item eventKey={piece.id} key={piece.id}>
-                  <Accordion.Header>{piece.name}</Accordion.Header>
-                  <Accordion.Body>
-                    <Row>
-                      <Col md={9}>
-                        <PieceActivityList
+          {Object.values(assignedPieces).map((piece) => (
+            <Card key={piece.id} className="mb-3">
+              <Card.Header className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">{piece.name}</h5>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => unassign(piece)}
+                >
+                  Remove <FaTrash />
+                </Button>
+              </Card.Header>
+              <Card.Body className="p-0">
+                <Table className="mb-0" responsive hover>
+                  <thead>
+                    <tr>
+                      <th>Activity</th>
+                      <th className="text-center">Submitted</th>
+                      <th className="text-center">Graded</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {piece.activities &&
+                      Object.keys(piece.activities).map((activityKey) => (
+                        <ActivityStats
+                          key={activityKey}
                           slug={slug}
                           piece={piece.slug}
-                          activities={piece.activities}
+                          activity={piece.activities[activityKey]}
+                          studentCount={studentCount}
                         />
-                      </Col>
-                      <Col style={{ textAlign: 'center' }}>
-                        <Button
-                          variant="danger"
-                          onClick={() => {
-                            unassign(piece);
-                          }}
-                        >
-                          Delete <FaTrash />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))}
-            </Accordion>
-          ) : (
-            <p>There are no pieces assigned to this course.</p>
-          )}
-        </Col>
-      </Row>
+                      ))}
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          ))}
+        </>
+      )}
+
+      <h2>Assign New Piece</h2>
+      <ListGroup>
+        {allPieces &&
+          allPieces
+            .filter((piece) => {
+              let reslt = true;
+              if (
+                assignedPieces &&
+                Object.values(assignedPieces).findIndex(
+                  (assignedPiece) => assignedPiece.id === piece.id,
+                ) !== -1
+              ) {
+                reslt = false;
+              }
+              return reslt;
+            })
+            .map((piece) => (
+              <ListGroupItem
+                key={`${piece.id}`}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <div>{piece.name}</div>
+                <Button onClick={() => assign(piece.piece_plan_id)}>
+                  Assign <FaPlus />
+                </Button>
+              </ListGroupItem>
+            ))}
+      </ListGroup>
     </>
   );
 }
