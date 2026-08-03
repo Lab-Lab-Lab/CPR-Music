@@ -1,16 +1,17 @@
-import { FaPlus, FaMarker, FaTrash } from 'react-icons/fa';
-import Accordion from 'react-bootstrap/Accordion';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 import Alert from 'react-bootstrap/Alert';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import {
@@ -21,7 +22,7 @@ import {
   getStudentAssignments,
 } from '../../api';
 import { fetchRoster } from '../../actions';
-import PieceActivityList from '../pieceActivityList';
+import ActivityStats from './activityStats';
 
 // for the teacher, it should:
 // 1. permit assigning of pieces
@@ -72,6 +73,10 @@ export default function TeacherCourseView() {
   } = useQuery(['assignedPieces', slug], getAssignedPieces(assignments), {
     enabled: !!assignments,
   });
+  const studentCount = roster?.items
+    ? Object.values(roster.items).filter((e) => e.role !== 'Teacher').length
+    : 0;
+
   const unassignMutation = useMutation(mutateUnassignPiece(slug), {
     onMutate: async (unassignedPiece) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -189,96 +194,93 @@ export default function TeacherCourseView() {
           </Col>
         </Row>
       )}
-      <Row>
-        <Col>
-          <h2>Assign New Piece</h2>
-          <ListGroup>
-            {allPieces &&
-              allPieces
-                .filter(
-                  (piece, idx, self) =>
-                    self.findIndex((p) => p.id === piece.id) === idx &&
-                    (!assignedPieces ||
-                      !Object.values(assignedPieces).some(
-                        (assignedPiece) =>
-                          assignedPiece.slug === piece.slug ||
-                          assignedPiece.id === piece.id,
-                      )),
-                )
-                .map((piece) =>
-                  !hasStudents ? (
-                    <OverlayTrigger
-                      key={`${piece.piece_plan_id}`}
-                      placement="top"
-                      overlay={
-                        <Tooltip>Please first add your students.</Tooltip>
-                      }
-                    >
-                      <div>
-                        <ListGroupItem
-                          className="d-flex justify-content-between align-items-center disabled"
-                        >
-                          <div>{piece.name}</div>
-                          <Button disabled>
-                            Assign <FaPlus />
-                          </Button>
-                        </ListGroupItem>
-                      </div>
-                    </OverlayTrigger>
-                  ) : (
-                    <ListGroupItem
-                      key={`${piece.piece_plan_id}`}
-                      className="d-flex justify-content-between align-items-center"
-                    >
+      {assignedPieces && Object.values(assignedPieces).length > 0 && (
+        <>
+          <h2>Assigned Pieces</h2>
+          {Object.values(assignedPieces).map((piece) => (
+            <Card key={piece.id} className="mb-3">
+              <Card.Header className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">{piece.name}</h5>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => unassign(piece)}
+                >
+                  Remove <FaTrash />
+                </Button>
+              </Card.Header>
+              <Card.Body className="p-0">
+                <Table className="mb-0" responsive hover>
+                  <thead>
+                    <tr>
+                      <th>Activity</th>
+                      <th className="text-center">Submitted</th>
+                      <th className="text-center">Graded</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {piece.activities &&
+                      Object.keys(piece.activities).map((activityKey) => (
+                        <ActivityStats
+                          key={activityKey}
+                          slug={slug}
+                          piece={piece.slug}
+                          activity={piece.activities[activityKey]}
+                          studentCount={studentCount}
+                        />
+                      ))}
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          ))}
+        </>
+      )}
+
+      <h2>Assign New Piece</h2>
+      <ListGroup>
+        {allPieces &&
+          allPieces
+            .filter(
+              (piece, idx, self) =>
+                self.findIndex((p) => p.id === piece.id) === idx &&
+                (!assignedPieces ||
+                  !Object.values(assignedPieces).some(
+                    (assignedPiece) =>
+                      assignedPiece.slug === piece.slug ||
+                      assignedPiece.id === piece.id,
+                  )),
+            )
+            .map((piece) =>
+              !hasStudents ? (
+                <OverlayTrigger
+                  key={`${piece.piece_plan_id}`}
+                  placement="top"
+                  overlay={<Tooltip>Please first add your students.</Tooltip>}
+                >
+                  <div>
+                    <ListGroupItem className="d-flex justify-content-between align-items-center disabled">
                       <div>{piece.name}</div>
-                      <Button onClick={() => assign(piece.piece_plan_id)}>
+                      <Button disabled>
                         Assign <FaPlus />
                       </Button>
                     </ListGroupItem>
-                  ),
-                )}
-          </ListGroup>
-        </Col>
-        <Col>
-          <h2>Assigned Pieces</h2>
-
-          {assignedPieces && Object.values(assignedPieces).length > 0 ? (
-            <Accordion
-              defaultActiveKey={Object.values(assignedPieces)[0]}
-              alwaysOpen
-            >
-              {Object.values(assignedPieces).map((piece) => (
-                <Accordion.Item eventKey={piece.id} key={piece.id}>
-                  <Accordion.Header>{piece.name}</Accordion.Header>
-                  <Accordion.Body>
-                    <Row>
-                      <Col md={9}>
-                        <PieceActivityList
-                          slug={slug}
-                          piece={piece.slug}
-                          activities={piece.activities}
-                        />
-                      </Col>
-                      <Col style={{ textAlign: 'center' }}>
-                        <Button
-                          variant="danger"
-                          onClick={() => {
-                            unassign(piece);
-                          }}
-                        >
-                          Delete <FaTrash />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))}
-            </Accordion>
-          ) : (
-            <p>There are no pieces assigned to this course.</p>
-          )}
-        </Col>
-      </Row>
+                  </div>
+                </OverlayTrigger>
+              ) : (
+                <ListGroupItem
+                  key={`${piece.piece_plan_id}`}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div>{piece.name}</div>
+                  <Button onClick={() => assign(piece.piece_plan_id)}>
+                    Assign <FaPlus />
+                  </Button>
+                </ListGroupItem>
+              ),
+            )}
+      </ListGroup>
     </>
   );
 }
