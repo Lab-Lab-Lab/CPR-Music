@@ -47,12 +47,19 @@ function CourseSelector() {
     );
   }
 
-  // if they aren't logged in, or have no enrollments
+  // if they aren't logged in, or have no enrollments (e.g. a brand-new
+  // teacher), still give them a way to the courses page
   if (
     enrollments &&
     (enrollments.length === 0 || JSON.stringify(enrollments) === '{}')
   ) {
-    return null;
+    return (
+      <Nav.Item>
+        <Link href="/courses" passHref legacyBehavior>
+          <Nav.Link>Courses</Nav.Link>
+        </Link>
+      </Nav.Item>
+    );
   }
 
   // if the user has only one enrollment, don't show the dropdown

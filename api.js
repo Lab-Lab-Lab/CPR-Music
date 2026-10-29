@@ -57,6 +57,26 @@ export async function getEnrollments() {
   return json;
 }
 
+// Research surveys that are due for the current user (reminders only).
+export async function getDueSurveys() {
+  const endpoint = 'surveys/';
+  const json = await makeRequest(endpoint);
+  return Array.isArray(json) ? json : [];
+}
+
+// First-time teacher setup progress: { onboarded_at, surveys_due, course, student_count }
+export async function getOnboarding() {
+  const endpoint = 'users/onboarding/';
+  const json = await makeRequest(endpoint);
+  return json;
+}
+
+export async function mutateFinishOnboarding() {
+  const endpoint = 'users/onboarding/';
+  const json = await makeRequest(endpoint, 'POST');
+  return json;
+}
+
 export function getStudentAssignments(slug) {
   return async () => {
     const endpoint = `courses/${slug}/assignments/`;

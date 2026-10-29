@@ -8,10 +8,12 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
 import Navigation from './nav';
+import SurveyReminder from './surveyReminder';
 import styles from './layout.module.css';
 import { getUserProfile, gotUser } from '../actions';
 
 const PUBLIC_PATHS = ['/', '/about', '/auth/signin', '/auth/signout', '/api/auth/signout', '/studio', '/silence-sandbox/catch-dropped-audio'];
+const SETUP_PATHS = ['/courses/new', '/courses/create', '/courses/[slug]/edit'];
 
 export default function Layout({ children }) {
   const router = useRouter();
@@ -27,9 +29,28 @@ export default function Layout({ children }) {
     }
   }, [status, dispatch]);
 
-  const { loaded: userLoaded, token } = useSelector(
-    (state) => state.currentUser,
-  );
+  const {
+    loaded: userLoaded,
+    token,
+    groups,
+    onboarded_at: onboardedAt,
+  } = useSelector((state) => state.currentUser);
+
+  // Teachers must finish first-time setup (/onboarding) before using course
+  // pages, except the ones setup itself sends them to.
+  const mustOnboard =
+    Array.isArray(groups) &&
+    groups.includes('Teacher') &&
+    !onboardedAt &&
+    router.pathname.startsWith('/courses') &&
+    !SETUP_PATHS.includes(router.pathname);
+  useEffect(() => {
+    if (mustOnboard) {
+      // keep the query so ?survey=completed still shows its message
+      router.replace({ pathname: '/onboarding', query: router.query });
+    }
+  }, [mustOnboard]);
+
   return (
     <>
       <Head>
@@ -67,10 +88,14 @@ export default function Layout({ children }) {
         <meta name="twitter:image" content="/MusicCPR-logo.png" />
       </Head>
       <Navigation />
-      {(!PUBLIC_PATHS.includes(router.pathname) && userLoaded && token) ||
-      PUBLIC_PATHS.includes(router.pathname) ? (
+      {!mustOnboard &&
+      ((!PUBLIC_PATHS.includes(router.pathname) && userLoaded && token) ||
+        PUBLIC_PATHS.includes(router.pathname)) ? (
         <Container fluid>
-          <main className={styles.container}>{children}</main>
+          <main className={styles.container}>
+            {token && <SurveyReminder />}
+            {children}
+          </main>
         </Container>
       ) : (
         <Spinner
