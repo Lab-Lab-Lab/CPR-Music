@@ -1,4 +1,14 @@
 module.exports = {
+  // Build metadata, served at /api/version. GITHUB_SHA is set in the prod
+  // GitHub Action; WORKERS_CI_COMMIT_SHA in Cloudflare Workers Builds (dev).
+  env: {
+    NEXT_PUBLIC_GIT_SHA:
+      process.env.GITHUB_SHA || process.env.WORKERS_CI_COMMIT_SHA || 'local',
+    NEXT_PUBLIC_APP_VERSION:
+      (process.env.GITHUB_EVENT_NAME === 'release' && process.env.GITHUB_REF_NAME) ||
+      process.env.WORKERS_CI_BRANCH ||
+      'dev',
+  },
   async rewrites() {
     return [
       {
