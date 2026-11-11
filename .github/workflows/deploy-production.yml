@@ -7,6 +7,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Records a GitHub Deployment; its status follows this job's result.
+    environment:
+      name: production
+      url: ${{ vars.PROD_NEXTAUTH_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,3 +35,20 @@ jobs:
             --var SECRET:${{ secrets.PROD_SECRET }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Verify the new build is live
+        env:
+          URL: ${{ vars.PROD_NEXTAUTH_URL }}/api/version
+          SHA: ${{ github.sha }}
+        run: |
+          for i in $(seq 1 40); do
+            body=$(curl -fsS --max-time 10 "$URL" || true)
+            echo "[$i] $body"
+            if [[ "$body" == *"\"$SHA\""* ]]; then
+              echo "Deployed: $SHA"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for $SHA at $URL" >&2
+          exit 1
