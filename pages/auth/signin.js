@@ -38,7 +38,15 @@ export default function SignIn({ csrfToken }) {
             Username
           </Form.Label>
           <Col sm={10}>
-            <Form.Control type="text" name="username" placeholder="Username" />
+            <Form.Control
+              type="text"
+              name="username"
+              placeholder="Username"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3" controlId="formPassword">
