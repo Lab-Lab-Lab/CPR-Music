@@ -97,7 +97,7 @@ export default function RTE({ submission, submitAction, autoFocus = false, teach
       }}
     >
       <dl>
-        <dt>Rhythym</dt>
+        <dt>Rhythm</dt>
         {teacher && <div><dd>(continuous rating scale). Mark the highest level of achievement the student reached:</dd>
           <dd>
             <ol>
