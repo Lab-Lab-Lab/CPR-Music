@@ -50,10 +50,6 @@ function PiecePicker() {
     return null;
   }
 
-  if (pieces.length === 1) {
-    return null;
-  }
-
   return (
     <Nav.Item className="me-1">
       <Form>
