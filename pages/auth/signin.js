@@ -1,38 +1,35 @@
-import { getCsrfToken, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import { Alert } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Layout from '../../components/layout';
+import { login, safeCallbackUrl } from '../../lib/auth';
 
-// https://github.com/nextauthjs/next-auth/issues/2426#issuecomment-1141406105
-// try this instead?
+export default function SignIn() {
+  const router = useRouter();
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-export default function SignIn({ csrfToken }) {
-  const session = useSession();
-  const [csrf, setCsrf] = useState(csrfToken);
-  const { error } = useRouter().query;
-
-  useEffect(() => {
-    async function fetchCsrf() {
-      const token = await getCsrfToken();
-      setCsrf(token);
+  const onSubmit = async (ev) => {
+    ev.preventDefault();
+    const form = new FormData(ev.currentTarget);
+    setSubmitting(true);
+    setError(null);
+    try {
+      await login(form.get('username'), form.get('password'));
+      router.push(safeCallbackUrl(router.query.callbackUrl));
+    } catch (err) {
+      setError(err.message);
+      setSubmitting(false);
     }
-    if (session.status !== 'loading') {
-      fetchCsrf();
-    }
-  }, [session.status]);
+  };
+
   return (
     <Layout>
-      <Form
-        method="post"
-        action="/api/auth/callback/credentials"
-        className="mt-3"
-      >
-        <input name="csrfToken" type="hidden" defaultValue={csrf} />
+      <Form onSubmit={onSubmit} className="mt-3">
         <Form.Group as={Row} className="mb-3" controlId="formUsername">
           <Form.Label column sm={2}>
             Username
@@ -46,6 +43,7 @@ export default function SignIn({ csrfToken }) {
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}
+              required
             />
           </Col>
         </Form.Group>
@@ -58,51 +56,25 @@ export default function SignIn({ csrfToken }) {
               type="password"
               name="password"
               placeholder="Password"
+              autoComplete="current-password"
+              required
             />
           </Col>
         </Form.Group>
-        <Button type="submit">Sign in</Button>
-        {error && <SignInError error={error} />}
+        <Button type="submit" disabled={submitting}>
+          Sign in
+        </Button>
+        {error && (
+          <Alert variant="danger" className="mt-3">
+            {error}{' '}
+            <a
+              href={`${process.env.NEXT_PUBLIC_BACKEND_HOST}/accounts/password/reset/`}
+            >
+              Forgot your password?
+            </a>
+          </Alert>
+        )}
       </Form>
     </Layout>
-  );
-}
-
-// This is the recommended way for Next.js 9.3 or newer
-// export async function getServerSideProps(context) {
-//   const token = await getCsrfToken(context);
-//   return {
-//     props: {
-//       csrfToken: token ?? null,
-//     },
-//   };
-// }
-
-const errors = {
-  Signin: 'Try signing with a different account.',
-  OAuthSignin: 'Try signing with a different account.',
-  OAuthCallback: 'Try signing with a different account.',
-  OAuthCreateAccount: 'Try signing with a different account.',
-  EmailCreateAccount: 'Try signing with a different account.',
-  Callback: 'Try signing with a different account.',
-  OAuthAccountNotLinked:
-    'To confirm your identity, sign in with the same account you used originally.',
-  EmailSignin: 'Check your email address.',
-  CredentialsSignin: 'Sign in failed. Check your login credentials.',
-  default: 'Unable to sign in.',
-};
-function SignInError({ error = errors.default }) {
-  const errorMessage = error && (errors[error] ?? errors.default);
-  return (
-    <Alert variant="danger">
-      {errorMessage}{' '}
-      {error === 'CredentialsSignin' && (
-        <a
-          href={`${process.env.NEXT_PUBLIC_BACKEND_HOST}/accounts/password/reset/`}
-        >
-          Forgot your password?
-        </a>
-      )}
-    </Alert>
   );
 }

@@ -1,20 +1,19 @@
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import { signOut, useSession } from 'next-auth/react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Layout from '../../components/layout';
-import { logoutUser } from '../../actions';
+import { loggedOut } from '../../actions';
+import { logout as logoutSession } from '../../lib/auth';
 
 function SignOut() {
   const router = useRouter();
 
-  const { data: session } = useSession();
   const dispatch = useDispatch();
-  const logout = async (ev) => {
-    dispatch(logoutUser(session.djangoToken));
-    await signOut();
+  const logout = async () => {
+    await logoutSession();
+    dispatch(loggedOut());
     router.push('/');
   };
   return (

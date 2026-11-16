@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { getSession } from 'next-auth/react';
+import { getToken } from './lib/auth';
 
 // https://allover.twodee.org/remote-state/fetching-memories/
 async function assertResponse(response) {
@@ -16,9 +16,7 @@ async function assertResponse(response) {
 }
 
 async function getDjangoToken() {
-  const session = await getSession();
-  if (!session || !session.djangoToken) return null;
-  return session.djangoToken;
+  return getToken();
 }
 
 async function makeRequest(

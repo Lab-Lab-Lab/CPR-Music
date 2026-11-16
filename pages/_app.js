@@ -1,6 +1,5 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/bootstrap.min-musiccpr.css';
@@ -16,7 +15,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import wrapper from '../store';
 
-function App({ Component, pageProps: { session, ...pageProps } }) {
+function App({ Component, pageProps }) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -26,12 +25,10 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
   });
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider session={session}>
-        {
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          <Component {...pageProps} />
-        }
-      </SessionProvider>
+      {
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        <Component {...pageProps} />
+      }
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

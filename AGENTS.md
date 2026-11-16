@@ -12,7 +12,7 @@ MusicCPR (CPR-Music) is a Next.js 14 web application for music education. It pro
 - **Data Fetching**: SWR, React Query
 - **UI**: React Bootstrap 2, react-icons
 - **Music/Audio**: Flat Embed (score editor), Tone.js, WaveSurfer.js, WebMIDI, Web Audio API, ffmpeg (wasm)
-- **Auth**: NextAuth.js v4
+- **Auth**: token from Django `/auth-token/`, stored in the browser (`lib/auth.js`)
 - **Monitoring**: Sentry
 - **Deployment**: Cloudflare (via @opennextjs/cloudflare)
 - **Node**: ^22.2.0
@@ -21,7 +21,7 @@ MusicCPR (CPR-Music) is a Next.js 14 web application for music education. It pro
 
 ```
 pages/                  # Next.js pages (Pages Router)
-  api/                  # API routes (auth, audio-proxy)
+  api/                  # API routes (audio-proxy)
   auth/                 # Sign in/out pages
   courses/              # Course management and activity pages
     [slug]/             # Dynamic course routes
@@ -58,8 +58,6 @@ Requires a backend running at `http://localhost:8000` in development (configured
 ## Environment Variables
 
 - `NEXT_PUBLIC_BACKEND_HOST` - Backend API URL
-- `SECRET` - NextAuth secret
-- `NEXTAUTH_URL` - NextAuth base URL
 
 ## Code Conventions
 

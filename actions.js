@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { signOut } from 'next-auth/react';
+import { clearAuth } from './lib/auth';
 import * as types from './types';
 
 // https://allover.twodee.org/remote-state/fetching-memories/
@@ -267,24 +267,6 @@ export function loggedOut() {
   };
 }
 
-export function logoutUser() {
-  return (dispatch, getState) => {
-    const {
-      currentUser: { token },
-    } = getState();
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth-token/`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Token ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(assertResponse)
-      .then((res) => res.json())
-      .then(loggedOut);
-  };
-}
-
 export function gotActivities({ activities, slug }) {
   return {
     type: types.Action.GotActivities,
@@ -471,8 +453,10 @@ export function getUserProfile() {
       })
       .then((myProfile) => dispatch(gotMyProfile(myProfile)))
       .catch((err) => {
-        if (err?.message.includes('403')) {
-          signOut({ callbackUrl: '/' });
+        // 401/403 = the saved token no longer works (revoked or expired)
+        if (err?.message.includes('401') || err?.message.includes('403')) {
+          clearAuth();
+          window.location.assign('/');
         }
       });
   };
