@@ -15,15 +15,14 @@ function readDismissed() {
 }
 
 // Nags (never blocks) about research surveys that are due. Survey links go to
-// Qualtrics in the same tab; Qualtrics redirects back via the backend, which
-// records the completion and lands the user on /courses?survey=completed.
+// Qualtrics in the same tab. Qualtrics records the completion with the backend
+// directly, then sends the user to a backend thank-you page linking back here.
 export default function SurveyReminder() {
   const router = useRouter();
   const [dismissed, setDismissed] = useState(readDismissed);
   const { data: surveys = [] } = useQuery('dueSurveys', getDueSurveys, {
     staleTime: 5 * 60 * 1000,
   });
-  const returned = router.query.survey;
 
   const dismiss = () => {
     try {
@@ -36,17 +35,6 @@ export default function SurveyReminder() {
 
   return (
     <>
-      {returned === 'completed' && (
-        <Alert variant="success" dismissible>
-          Thanks for completing the survey!
-        </Alert>
-      )}
-      {returned === 'invalid' && (
-        <Alert variant="warning" dismissible>
-          We couldn&apos;t record that survey. If you finished it, let the
-          research team know.
-        </Alert>
-      )}
       {/* /onboarding lists due surveys itself */}
       {!dismissed &&
         surveys.length > 0 &&
