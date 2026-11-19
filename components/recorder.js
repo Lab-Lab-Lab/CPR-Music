@@ -1369,6 +1369,11 @@ export function Recorder({ submit, accompaniment }) {
   const accompanimentRef = useRef(null);
   const router = useRouter();
   const { slug, piece, actCategory, partType } = router.query;
+  // Upload status is kept in redux, which survives switching activities, so the
+  // key has to include the activity. Otherwise take 1 on bassline shows the
+  // "Submitted" status left over from take 1 on melody.
+  const takeStatusId = (i) =>
+    `${slug}/${piece}/${actCategory}/${partType}/recording-take-${i}`;
   const [recordingType, setRecordingType] = useState("mic");
   const webmidiIndex = useRef(null);
   const handleRecordingTypeChange = useCallback((e) => {
@@ -1820,7 +1825,7 @@ export function Recorder({ submit, accompaniment }) {
                   <AudioViewer src={take.url} />
                   <div>
                     <Button
-                      onClick={() => submitRecording(i, `recording-take-${i}`)}
+                      onClick={() => submitRecording(i, takeStatusId(i))}
                     >
                       <FaCloudUploadAlt /> Submit
                     </Button>
@@ -1829,7 +1834,7 @@ export function Recorder({ submit, accompaniment }) {
                     </Button>
                   </div>
                   <div className="minWidth">
-                    <StatusIndicator statusId={`recording-take-${i}`} />
+                    <StatusIndicator statusId={takeStatusId(i)} />
                   </div>
                 </ListGroupItem>
               ))}
