@@ -3,7 +3,7 @@
 import Container from 'react-bootstrap/Container';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '../lib/auth';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
@@ -12,13 +12,13 @@ import SurveyReminder from './surveyReminder';
 import styles from './layout.module.css';
 import { getUserProfile, gotUser } from '../actions';
 
-const PUBLIC_PATHS = ['/', '/about', '/auth/signin', '/auth/signout', '/api/auth/signout', '/studio', '/silence-sandbox/catch-dropped-audio'];
+const PUBLIC_PATHS = ['/', '/about', '/auth/signin', '/auth/signout', '/studio', '/silence-sandbox/catch-dropped-audio'];
 const SETUP_PATHS = ['/courses/new', '/courses/create', '/courses/[slug]/edit'];
 
 export default function Layout({ children }) {
   const router = useRouter();
 
-  const { status, data } = useSession({
+  const { status, data } = useAuth({
     required: !PUBLIC_PATHS.includes(router.pathname),
   });
   const dispatch = useDispatch();

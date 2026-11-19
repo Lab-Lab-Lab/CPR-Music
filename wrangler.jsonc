@@ -23,7 +23,6 @@
     "enabled": true
   },
   "vars": {
-    "NEXTAUTH_URL": "https://dev.musiccpr.org",
     "NEXT_PUBLIC_BACKEND_HOST": "https://dev-api.musiccpr.org"
   }
 }

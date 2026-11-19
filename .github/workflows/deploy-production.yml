@@ -30,9 +30,7 @@ jobs:
       - name: Deploy
         run: |
           npx wrangler deploy --name musiccpr-frontend-prod \
-            --var NEXTAUTH_URL:${{ vars.PROD_NEXTAUTH_URL }} \
-            --var NEXT_PUBLIC_BACKEND_HOST:${{ vars.PROD_NEXT_PUBLIC_BACKEND_HOST }} \
-            --var SECRET:${{ secrets.PROD_SECRET }}
+            --var NEXT_PUBLIC_BACKEND_HOST:${{ vars.PROD_NEXT_PUBLIC_BACKEND_HOST }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 

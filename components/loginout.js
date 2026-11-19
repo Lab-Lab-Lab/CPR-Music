@@ -1,12 +1,12 @@
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import { useSelector } from 'react-redux';
 import * as Sentry from "@sentry/nextjs";
+import { useAuth } from '../lib/auth';
 
 function LoginOut() {
-  const { data: session } = useSession();
+  const { data: session } = useAuth();
   const currentUserInfo = useSelector((state) => state.currentUser);
   useEffect(() => {
     if (currentUserInfo.loaded) {
