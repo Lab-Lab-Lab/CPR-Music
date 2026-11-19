@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { Form, ListGroup, Nav, Spinner } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import { getStudentAssignments } from '../../api';
+import { getEnrollments, getStudentAssignments } from '../../api';
 
 // FIXME: probably should not need this function at all, this info should probably have come from the backend?
 function assnToKey(assignment, debugStr = '') {
@@ -58,7 +58,16 @@ function NavActivityPicker(assignment) {
   const { slug, piece, actCategory = 'Create' } = router.query;
 
   const currentActivity = actCategory;
-  const isGrading = router.asPath.endsWith('/grade');
+
+  // Teachers should only ever land on grading pages, never on the student
+  // activity page where they could record and submit work themselves.
+  const { data: enrollments } = useQuery('enrollments', getEnrollments, {
+    staleTime: 5 * 60 * 1000,
+  });
+  const currentEnrollment = enrollments?.find((e) => e.course.slug === slug);
+  const isTeacher = !!currentEnrollment && currentEnrollment.role !== 'Student';
+
+  const isGrading = isTeacher || router.asPath.endsWith('/grade');
   const currentRouteSuffix = router.asPath.substring(
     `/courses/${slug}/${piece}/`.length,
   ).replace(/\/grade$/, '');
