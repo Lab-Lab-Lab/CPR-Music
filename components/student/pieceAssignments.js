@@ -88,21 +88,24 @@ function PieceAssignments({ piece, canEditInstruments, isTeacher }) {
               arr.findIndex((a) => assnToKey(a) === assnToKey(assn)) === i
             )
             .map((assignment) => (
-              <ListGroupItem
+              // The whole row is the link, so clicking the todo/done badge
+              // (or anywhere else on the row) opens the activity.
+              <Link
                 key={`assn-${assignment.id}`}
-                className="d-flex justify-content-between"
+                passHref
+                legacyBehavior
+                href={`/courses/${slug}/${
+                  assignment.piece_slug
+                }/${assnToKey(assignment, 'debug str this is from pieceAssignments')}`}
               >
-                <Link
-                  passHref
-                  legacyBehavior
-                  href={`/courses/${slug}/${
-                    assignment.piece_slug
-                  }/${assnToKey(assignment, 'debug str this is from pieceAssignments')}`}
+                <ListGroupItem
+                  action
+                  className="d-flex justify-content-between align-items-center"
                 >
-                  <a>{assnToContent(assignment)}</a>
-                </Link>
-                <SubmissionsStatusBadge assn={assignment} />
-              </ListGroupItem>
+                  <span>{assnToContent(assignment)}</span>
+                  <SubmissionsStatusBadge assn={assignment} />
+                </ListGroupItem>
+              </Link>
             ))}
         </ListGroup>
       )}
