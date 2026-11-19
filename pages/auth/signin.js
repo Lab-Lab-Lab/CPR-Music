@@ -20,7 +20,9 @@ export default function SignIn() {
     setError(null);
     try {
       await login(form.get('username'), form.get('password'));
-      router.push(safeCallbackUrl(router.query.callbackUrl));
+      router.push(
+        safeCallbackUrl(router.query.callbackUrl, '/', ['/', '/dashboard', '/profile']),
+      );
     } catch (err) {
       setError(err.message);
       setSubmitting(false);
