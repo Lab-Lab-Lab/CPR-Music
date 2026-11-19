@@ -46,8 +46,7 @@ export default function Layout({ children }) {
     !SETUP_PATHS.includes(router.pathname);
   useEffect(() => {
     if (mustOnboard) {
-      // keep the query so ?survey=completed still shows its message
-      router.replace({ pathname: '/onboarding', query: router.query });
+      router.replace('/onboarding');
     }
   }, [mustOnboard]);
 
